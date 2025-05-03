@@ -1,9 +1,15 @@
-const User = require("../../models/User")
-const coolsms = require("coolsms-node-sdk").default
-const messageService = new coolsms("SMS_API_KEY", "SMS_API_SECRET")
-const AuthCode = require("../../models/AuthCode")
+import coolsms from "coolsms-node-sdk"
+
+const messageService = coolsms.default // 또는 coolsms.default로 접근
+
+const message = new messageService(
+  process.env.SMS_API_KEY,
+  process.env.SMS_API_SECRET
+)
+import AuthCode from "../../models/AuthCode.js"
 
 function generateAuthCode() {
+  // 랜덤으로 6자리 코드 생성
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
@@ -30,9 +36,10 @@ async function saveAuthCodeToDB(phoneNum, authCode) {
 //인증 코드를 발송하는 함수
 async function sendAuthCodeToUser(phoneNum, authCode) {
   try {
-    const res = await messageService.sendOne({
+    // coolsms의 sendOne 사용 (한 사람에게만 전송함)
+    const res = await message.sendOne({
       to: phoneNum,
-      from: "01047013432", // 실제 발신 번호로 채워야 합니다.
+      from: process.env.MY_PHONE_NUM, // 내 번호
       text: `[일손 (ilson)] 인증 번호 [${authCode}]를 입력해주세요`,
     })
 
@@ -46,9 +53,11 @@ async function sendAuthCodeToUser(phoneNum, authCode) {
 
 // 인증 코드 발송, DB 저장
 async function sendAuthCode(phoneNum) {
+  //authCode 생성
   let authCode = generateAuthCode()
 
   try {
+    // sendAuthCodeToUser 함수 호출
     const isSent = await sendAuthCodeToUser(phoneNum, authCode)
     if (isSent) {
       await saveAuthCodeToDB(phoneNum, authCode)
@@ -64,4 +73,4 @@ async function sendAuthCode(phoneNum) {
   }
 }
 
-module.exports = sendAuthCode
+export default sendAuthCode

@@ -1,9 +1,10 @@
-const jwt = require("jsonwebtoken")
+import pkg from "jsonwebtoken"
+const { sign, verify } = pkg
 const secretKey = process.env.JWT_SECRET_KEY
 
 //토큰 발행
 const generateToken = (payload) => {
-  const token = jwt.sign(payload, secretKey, { expiresIn: "1h" })
+  const token = sign(payload, secretKey, { expiresIn: "1h" })
 
   return token
 }
@@ -12,7 +13,7 @@ const generateToken = (payload) => {
 const refreshToken = (token) => {
   try {
     // 기존 토큰의 유효성 검사 및 디코딩
-    const decoded = jwt.verify(token, secretKey)
+    const decoded = verify(token, secretKey)
 
     // 새로운 페이로드 생성
     const payload = {
@@ -30,4 +31,4 @@ const refreshToken = (token) => {
   }
 }
 
-module.exports = { generateToken, refreshToken }
+export default { generateToken, refreshToken }

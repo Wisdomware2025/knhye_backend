@@ -2,7 +2,6 @@
   "name": "capstone",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node ./app.js",
     "dev": "nodemon app.js"
@@ -10,6 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "module",
   "description": "",
   "dependencies": {
     "-": "^0.0.1",

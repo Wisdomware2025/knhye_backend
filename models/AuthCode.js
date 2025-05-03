@@ -1,6 +1,6 @@
-const mongoose = require("mongoose")
+import { Schema, model } from "mongoose"
 
-const AuthCodeSchema = new mongoose.Schema(
+const AuthCodeSchema = new Schema(
   {
     phone_number: {
       type: String,
@@ -20,4 +20,4 @@ const AuthCodeSchema = new mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model("AuthCode", AuthCodeSchema)
+export default model("AuthCode", AuthCodeSchema)

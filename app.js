@@ -1,29 +1,29 @@
-const express = require("express")
-const cors = require("cors")
-const cookieParser = require("cookie-parser")
+import express, { json, urlencoded } from "express"
+
+import cookieParser from "cookie-parser"
 
 // const socket = require("socket.io")
-const http = require("http")
-const fs = require("fs")
+import { createServer } from "http"
 
-const connDB = require("./config/db")
+import connDB from "./config/db.js"
 
-const authRoutes = require("./routes/auth/index")
+import authRoutes from "./routes/auth/index.js"
 
-require("dotenv").config()
+import dotenv from "dotenv"
+dotenv.config()
 
 const app = express()
 const port = process.env.PORT
 
-const server = http.createServer(app)
+const server = createServer(app)
 //express 서버 위에 WebSocket 서버를 올림
 //클라이언트와 연결할 수 있도록 cors 설정
 // const io = socket(server, { cors: { origin: "*" } })
 
 //Middleware 설정
-app.use(express.json())
+app.use(json())
 app.use(cookieParser())
-app.use(express.urlencoded({ extended: true }))
+app.use(urlencoded({ extended: true }))
 
 connDB() // MongoDB 연결
 
