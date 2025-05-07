@@ -16,16 +16,16 @@ const authMiddleware = (req, res, next) => {
 
     // 토큰 검증
     const decoded = verify(actualToken, process.env.JWT_SECRET)
-
-    // 사용자 정보 요청 객체에 저장
-    req.user = decoded
-    next()
   } catch (error) {
     res.status(401).json({
       message: "유효하지 않은 토큰입니다.",
       error: error.message,
     })
   }
+
+  // 사용자 정보 요청 객체에 저장
+  req.user = decoded
+  next()
 }
 
 export default authMiddleware

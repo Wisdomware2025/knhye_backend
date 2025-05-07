@@ -7,7 +7,8 @@ import { createServer } from "http"
 
 import connDB from "./config/db.js"
 
-import authRoutes from "./routes/auth/index.js"
+import authRoutes from "./routes/user/auth/index.js"
+import boardRoutes from "./routes/board/index.js"
 
 import dotenv from "dotenv"
 dotenv.config()
@@ -28,5 +29,6 @@ app.use(urlencoded({ extended: true }))
 connDB() // MongoDB 연결
 
 app.use("/auth", authRoutes)
+app.use("/boards", boardRoutes)
 
 app.listen(port, () => console.log(`Runnig at http://localhost: ${port}`))

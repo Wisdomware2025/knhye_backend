@@ -1,5 +1,5 @@
-import pkg from "jsonwebtoken"
-const { sign, verify } = pkg
+import { sign, verify } from "jsonwebtoken"
+
 const secretKey = process.env.JWT_SECRET_KEY
 
 //토큰 발행
