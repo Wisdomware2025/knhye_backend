@@ -1,10 +1,10 @@
-const mongoose = require("mongoose")
+import { Schema, model } from "mongoose"
 
-const BoardSchema = new mongoose.Schema({
+const BoardSchema = new Schema({
   title: { type: String, required: true }, // 제목
   content: { type: String, required: true }, // 내용
   image: { type: String }, // 이미지
-  author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   role: { type: String, required: true }, // 역할
   location: { type: String }, // 위치
   work: { type: String }, // 업무
@@ -13,4 +13,4 @@ const BoardSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 })
 
-module.exports = mongoose.model("Board", BoardSchema)
+export default model("Board", BoardSchema)

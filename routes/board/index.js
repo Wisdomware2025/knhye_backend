@@ -6,7 +6,7 @@ import {
   updateBoard,
   deleteBoard,
 } from "../../controllers/board/index.js"
-import authMiddleware from "../../middleware/auth/index.js"
+import authMiddleware from "../../middlewares/auth/index.js"
 import { validateFarmerBoard } from "../../middlewares/board/index.js"
 import { validateWorkerBoard } from "../../middlewares/board/index.js"
 
@@ -16,7 +16,8 @@ router.get("/", getAllBoards)
 router.get("/:id", getBoardById)
 router.post("/farmer", authMiddleware, validateFarmerBoard, createBoard)
 router.post("/worker", authMiddleware, validateWorkerBoard, createBoard)
-router.put("/:id", authMiddleware, boardMiddleware, updateBoard)
-router.delete("/:id", authMiddleware, boardMiddleware, deleteBoard)
+router.put("/farmer/:id", authMiddleware, validateFarmerBoard, updateBoard)
+router.put("/worker/:id", authMiddleware, validateWorkerBoard, updateBoard)
+router.delete("/:id", authMiddleware, deleteBoard)
 
 export default router

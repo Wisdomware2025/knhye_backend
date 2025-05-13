@@ -1,3 +1,5 @@
+import { body, validationResult } from "express-validator"
+
 const handleValidationAndAuth = (req, res, next) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -11,7 +13,7 @@ const handleValidationAndAuth = (req, res, next) => {
   next()
 }
 
-// 농부 게시글글
+// 농부 게시글
 export const validateFarmerBoard = [
   body("title").notEmpty().withMessage("제목을 입력해주세요."),
   body("content").notEmpty().withMessage("내용을 입력해주세요."),
@@ -20,7 +22,6 @@ export const validateFarmerBoard = [
   body("date").notEmpty().withMessage("날짜와 시간을 입력해주세요."),
   body("charge").notEmpty().withMessage("급여를 입력해주세요."),
   handleValidationAndAuth,
-
   (req, res, next) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
