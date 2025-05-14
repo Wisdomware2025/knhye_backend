@@ -1,6 +1,6 @@
 import AuthService from "../../../services/user/auth/index.js"
-import User from "../../../models/User.js"
-import AuthCode from "../../../models/AuthCode.js"
+import User from "../../../models/user/User.js"
+import AuthCode from "../../../models/user/AuthCode.js"
 
 //AuthService 의 인스턴스 생성
 const authService = new AuthService({

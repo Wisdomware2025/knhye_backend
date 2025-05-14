@@ -44,7 +44,7 @@ export async function getSchedule(req, res) {
 
 export async function createSchedule(req, res) {
   try {
-    const date = req.params
+    const date = req.params.date
     const data = req.body
     const userId = req.user.id
 
@@ -60,9 +60,9 @@ export async function createSchedule(req, res) {
 
 export async function updateSchedule(req, res) {
   try {
-    const scheduleId = req.schedule.id
-    const userId = req.user.id
+    const scheduleId = req.params.id
     const date = req.params.date
+    const userId = req.user.id
     const data = req.body
     const updated = await updateOne({ scheduleId, date, data, userId })
     res.json(updated)

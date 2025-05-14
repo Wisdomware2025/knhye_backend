@@ -5,9 +5,10 @@ import {
   signup,
   login,
 } from "../../../controllers/user/auth/index.js"
+import { validatePhoneNum } from "../../../middlewares/auth/phoneNum.js"
 
 router.post("/send-authcode", sendingAuthCode)
-router.post("/signup", signup)
-router.post("/login", login)
+router.post("/signup", validatePhoneNum, signup)
+router.post("/login", validatePhoneNum, login)
 
 export default router

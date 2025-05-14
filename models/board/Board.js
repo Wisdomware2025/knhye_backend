@@ -10,6 +10,7 @@ const BoardSchema = new Schema({
   work: { type: String }, // 업무
   date: { type: Date }, // 날짜, 시간
   charge: { type: Number }, // 급여
+  isSelected: { type: Boolean },
   createdAt: { type: Date, default: Date.now },
 })
 

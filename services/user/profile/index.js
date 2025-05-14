@@ -1,4 +1,4 @@
-import { findById, findByIdAndUpdate } from "../../../models/User.js"
+import { findById, findByIdAndUpdate } from "../../../models/user/User.js"
 
 class ProfileService {
   //유저 프로필 조회

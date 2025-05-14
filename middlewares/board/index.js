@@ -47,8 +47,3 @@ export const validateWorkerBoard = [
     next()
   },
 ]
-
-export default {
-  validateFarmerBoard,
-  validateWorkerBoard,
-}
