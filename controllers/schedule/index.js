@@ -6,7 +6,6 @@ import {
   updateOne,
   deleteOne,
   scheduleNotificationJob,
-  getScheduleById,
 } from "../../services/schedule/index.js"
 import moment from "moment"
 

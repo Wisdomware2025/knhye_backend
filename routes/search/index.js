@@ -1,8 +1,8 @@
-import express from "express"
+import { Router } from "express"
 import { search } from "../../controllers/search"
 import authMiddleware from "../../middlewares/auth"
 
-const router = express.Router()
+const router = Router()
 
 router.get("/", authMiddleware, search)
 

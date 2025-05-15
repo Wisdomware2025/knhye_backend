@@ -10,6 +10,9 @@ import connDB from "./config/db.js"
 import authRoutes from "./routes/user/auth/index.js"
 import boardRoutes from "./routes/board/index.js"
 import scheduleRoutes from "./routes/schedule/index.js"
+import searchRoutes from "./routes/search/index.js"
+import reviewRoutes from "./routes/review/index.js"
+import friendRoutes from "./routes/user/friend/index.js"
 
 import dotenv from "dotenv"
 dotenv.config()
@@ -32,5 +35,8 @@ connDB() // MongoDB 연결
 app.use("/auth", authRoutes)
 app.use("/boards", boardRoutes)
 app.use("/schedules", scheduleRoutes)
+app.use("/search", searchRoutes)
+app.use("/reviews", reviewRoutes)
+app.use("/friends", friendRoutes)
 
 app.listen(port, () => console.log(`Runnig at http://localhost: ${port}`))

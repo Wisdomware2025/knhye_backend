@@ -1,6 +1,3 @@
-import { Router } from "express"
-const router = Router()
-
 import {
   getScheduleDday,
   getSchedule,
@@ -12,6 +9,8 @@ import {
 
 import authMiddleware from "../../middlewares/auth/index.js"
 import scheduleMiddleware from "../../middlewares/schedule/index.js"
+import { Router } from "express"
+const router = Router()
 
 router.get("/:date", authMiddleware, getScheduleDday)
 router.get("/:id", authMiddleware, getSchedule)

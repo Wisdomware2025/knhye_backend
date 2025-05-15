@@ -1,4 +1,4 @@
-import Schedule from "../../models/Schedule.js"
+import Schedule from "../../models/schedule/Schedule.js"
 import { scheduledJobs, scheduleJob } from "node-schedule"
 import moment from "moment"
 import { sendNotification } from "../../firebase/fcm.js"
@@ -96,8 +96,10 @@ export async function scheduleNotificationJob(targetDate) {
     NOTIFICATION_DATES.forEach(({ day, message }) => {
       //알림을 보낼 날짜
       const time = dateMoment.clone().add(day, "days").toDate()
+      // 알림 제목
+      const title = `${message}`
       // 알림 본문
-      const body = `${work} - ${message}`
+      const body = `오늘의 일정 : ${work}`
       //등록된 job 식별하기
       const jobName = `${scheduleEntry.id}_${day}`
 

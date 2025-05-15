@@ -1,5 +1,5 @@
 import BoardService from "../../services/board/index.js"
-import Board from "../../models/Board.js"
+import Board from "../../models/board/Board.js"
 
 const boardService = new BoardService({
   Board,
