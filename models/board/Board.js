@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose"
+import CommentSchema from "./Comment.js"
 
 const BoardSchema = new Schema({
   title: { type: String, required: true }, // 제목
@@ -10,7 +11,11 @@ const BoardSchema = new Schema({
   work: { type: String }, // 업무
   date: { type: Date }, // 날짜, 시간
   charge: { type: Number }, // 급여
-  isSelected: { type: Boolean },
+
+  isSelected: { type: Boolean }, // 완료 됐는지
+  likesCnt: { type: Number, default: 0 },
+  comments: [CommentSchema],
+
   createdAt: { type: Date, default: Date.now },
 })
 

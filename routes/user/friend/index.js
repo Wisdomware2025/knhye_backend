@@ -9,6 +9,6 @@ const router = Router()
 
 router.post("/:userId/:friendId", authMiddleware, addFriends)
 router.delete("/:userId/:friendId", authMiddleware, removeFriends)
-router.get("/userId", authMiddleware, getFriendsCnt)
+router.get("/:userId", authMiddleware, getFriendsCnt)
 
 export default router
