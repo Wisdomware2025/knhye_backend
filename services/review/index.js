@@ -1,31 +1,40 @@
-import Review from "../../models/review/Review.js"
-
-async function checkReviewAndAuthor(reviewId, authorId) {
-  const review = await Review.findById(reviewId)
-
-  if (!review) {
-    throw { status: 404, message: "리뷰가 없습니다." }
-  }
-
-  if (review.author.toString() !== authorId) {
-    throw { status: 403, message: "권한이 없습니다." }
-  }
-
-  return review
-}
-
 class ReviewService {
-  constructor({ Review }) {
+  constructor({ Review, LikeService }) {
     this.Review = Review
+    this.LikeService = LikeService
+  }
+
+  async checkReviewAndAuthor(reviewId, authorId) {
+    const review = await this.Review.findById(reviewId)
+
+    if (!review) {
+      throw { status: 404, message: "리뷰가 없습니다." }
+    }
+
+    if (review.author.toString() !== authorId) {
+      throw { status: 403, message: "권한이 없습니다." }
+    }
+
+    return review
   }
 
   async getReviews(receiverId) {
     return await this.Review.find({ receiver: receiverId })
   }
 
-  async createReview(data, authorId, receiverId) {
+  async createReview(
+    role,
+    isSatisfaction,
+    content,
+    image,
+    authorId,
+    receiverId
+  ) {
     const review = new this.Review({
-      data,
+      role,
+      isSatisfaction,
+      content,
+      image,
       author: authorId,
       receiver: receiverId,
     })
@@ -33,11 +42,21 @@ class ReviewService {
     return review.save()
   }
 
-  async updateReview({ reviewId, data, authorId }) {
+  async updateReview({
+    reviewId,
+    role,
+    isSatisfaction,
+    content,
+    image,
+    authorId,
+  }) {
     const review = await checkReviewAndAuthor(reviewId, authorId)
 
     review.set({
-      ...data,
+      role,
+      isSatisfaction,
+      content,
+      image,
     })
 
     return await review.save()
@@ -47,6 +66,10 @@ class ReviewService {
     const review = await checkReviewAndAuthor(reviewId, authorId)
 
     return await review.deleteOne()
+  }
+
+  async handleLike({ userId, reviewId }) {
+    return await this.LikeService.toggleLikeReview({ userId, reviewId })
   }
 }
 

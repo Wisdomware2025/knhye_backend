@@ -5,10 +5,11 @@ const boardService = new BoardService({
   Board,
 })
 
-//모든 게시글 조회
-export const getAllBoards = async (req, res) => {
+//유저의 모든 게시글 조회
+export const getBoardsByUserId = async (req, res) => {
   try {
-    const boards = await boardService.findAllBoards()
+    const userId = req.params
+    const boards = await boardService.findBoardsByUserId(userId)
     res.json(boards)
   } catch (err) {
     res.status(500).json({ message: err })
@@ -18,8 +19,8 @@ export const getAllBoards = async (req, res) => {
 // 특정 게시글 조회
 export const getBoardById = async (req, res) => {
   try {
-    const { id } = req.params
-    const board = await boardService.findOneBoard(id)
+    const boardId = req.params
+    const board = await boardService.findOneBoard(boardId)
 
     if (!board) {
       res
@@ -57,11 +58,11 @@ export const updateBoard = async (req, res) => {
   try {
     const data = {
       ...req.body,
-      author: req.user.username,
+      author: req.user.id,
     }
 
-    const { id } = req.params
-    const board = await boardService.updateBoard(id, data)
+    const { boardId } = req.params
+    const board = await boardService.updateBoard(boardId, data)
 
     if (!board) {
       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." })
@@ -76,8 +77,8 @@ export const updateBoard = async (req, res) => {
 
 export const deleteBoard = async (req, res) => {
   try {
-    const { id } = req.params
-    const deleted = await boardService.deleteBoard(id, req.user)
+    const { boardId } = req.params
+    const deleted = await boardService.deleteBoard(boardId, req.user.id)
 
     if (!deleted) {
       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." })
@@ -86,6 +87,36 @@ export const deleteBoard = async (req, res) => {
     return res.status(200).json({ message: "게시글 삭제 완료" })
   } catch (err) {
     console.log(err)
+    return res.status(500).json({ message: "서버 오류" })
+  }
+}
+
+export const likeOneBoard = async (req, res) => {
+  try {
+    const { userId, boardId } = req.params
+    const board = await boardService.handleLike({ userId, boardId })
+
+    if (!board) {
+      return res.stauts(404).json({ message: "게시글을 찾을 수 없음" })
+    }
+
+    return res.status(200).json({ message: "게시글 좋아요 수 증가" })
+  } catch (err) {
+    return res.status(500).json({ message: "서버 오류" })
+  }
+}
+
+export const selectOneBoard = async (req, res) => {
+  try {
+    const boardId = req.params
+    const board = await boardService.selectBoard(boardId)
+
+    if (!board) {
+      return res.status(404).json({ message: "게시글 없음" })
+    }
+
+    return res.status(200).json({ message: "구인 완료됨" })
+  } catch (err) {
     return res.status(500).json({ message: "서버 오류" })
   }
 }

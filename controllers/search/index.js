@@ -1,4 +1,4 @@
-import SearchService from "../../services/search.js"
+import SearchService from "../../services/search/index.js"
 
 export const search = async (req, res) => {
   //get 함수에서 문자열을 기대함

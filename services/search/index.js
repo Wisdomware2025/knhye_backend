@@ -1,5 +1,5 @@
-import Board from "../../models/Board"
-import User from "../../models/User"
+import Board from "../../models/board/Board.js"
+import User from "../../models/user/User.js"
 
 class SearchService {
   async getSearchAll(query) {

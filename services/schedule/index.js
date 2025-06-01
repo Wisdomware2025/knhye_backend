@@ -3,12 +3,7 @@ import { scheduledJobs, scheduleJob } from "node-schedule"
 import moment from "moment"
 import { sendNotification } from "../../firebase/fcm.js"
 
-// export async function getSchedules() {
-//   return await Schedule.find()
-// }
-
 export async function getScheduleByDate(date) {
-  //타임존에 관계없이 정확한 날짜 계산을 위해 moment-timezone 사용
   const start = moment.tz(date, "Asia/Seoul").startOf("day").toDate()
   const end = moment(date, "Asia/Seoul").endOf("day").toDate()
 
@@ -77,17 +72,14 @@ const NOTIFICATION_DATES = [{ day: 0, message: "일정 당일입니다!" }]
 
 export async function scheduleNotificationJob(targetDate) {
   try {
-    // 특정 날짜에 해당하는 일정을 찾아오는 변수
     const scheduleEntry = await Schedule.findOne({ date: targetDate })
     if (!scheduleEntry) throw new Error("해당 날짜에 일정이 없습니다.")
 
-    //moment-timezone 사용
     const dateMoment = moment.tz(scheduleEntry.date, "YYYY-MM-DD", "Asia/Seoul")
 
     const work = scheduleEntry.work
     const fcmToken = scheduleEntry.fcmToken || "" // 토큰 처리 필요
 
-    //토큰이 빈 문자열이면 전송 시 실패
     if (!fcmToken || fcmToken.trim() === "") {
       console.warn("유효하지 않은 FCM 토큰")
       return
@@ -109,17 +101,14 @@ export async function scheduleNotificationJob(targetDate) {
         return
       }
 
-      //같은 시간, 같은 알림의 내용의 작업이 여러번 등록 => 알림 중복 전송
-      //node-schedule은 내부적으로 중복 예약을 막지 않음
-      //date를 정수로 바꿔서 비교해야함
       if (
         !scheduledJobs[jobName] ||
-        scheduledJobs[jobName].nextInvocation().getTime() !== time
+        Math.abs(
+          scheduledJobs[jobName].nextInvocation().getTime() - time.getTime()
+        ) > 1000
       ) {
-        //time에 맞춰서 함수 실행
         scheduleJob(jobName, time, async () => {
           try {
-            // sendNotification 호출
             await sendNotification(fcmToken, body)
           } catch (err) {
             console.error(`알림 전송 실패: ${err.message}`)

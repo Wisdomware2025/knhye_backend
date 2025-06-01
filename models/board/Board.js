@@ -1,11 +1,11 @@
 import { Schema, model } from "mongoose"
-import CommentSchema from "./Comment.js"
 
 const BoardSchema = new Schema({
   title: { type: String, required: true }, // 제목
   content: { type: String, required: true }, // 내용
   image: { type: String }, // 이미지
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  authorName: { type: String, ref: "User", required: true },
   role: { type: String, required: true }, // 역할
   location: { type: String }, // 위치
   work: { type: String }, // 업무
@@ -14,7 +14,8 @@ const BoardSchema = new Schema({
 
   isSelected: { type: Boolean }, // 완료 됐는지
   likesCnt: { type: Number, default: 0 },
-  comments: [CommentSchema],
+  viewCnt: { type: Number, default: 0 },
+  comments: [{ type: Schema.Types.ObjectId, ref: "Comments" }],
 
   createdAt: { type: Date, default: Date.now },
 })

@@ -1,23 +1,34 @@
-import Board from "../../models/board/Board.js"
-import Like from "../../models/board/Like.js"
-import Likes from "../../models/board/Like.js"
+function getUserIP(req) {
+  const addr = req.headers["x-forwarded-for"] || req.connection.remoteAddress
+  return addr
+}
 
 class BoardService {
-  constructor({ Board }) {
+  constructor({ Board, LikeService }) {
     this.Board = Board
-    this.Likes = Likes
+    this.LikeService = LikeService
   }
 
-  async findAllBoards() {
-    return await this.Board.find()
+  async findBoardsByUserId(userId) {
+    return await this.Board.find(userId)
   }
 
-  async findOneBoard(id) {
-    return await this.Board.findById(id)
+  async findOneBoard(boardId) {
+    if (req.cookies[boardId] == undefined) {
+      // key, value, 옵션을 설정해준다.
+      res.cookie(boardId, getUserIP(req), {
+        // 유효시간 : 12분
+        maxAge: 720000,
+      })
+      // 조회수 증가 쿼리
+      await this.Board.updateOne({ boardId }, { $inc: { viewCnt: 1 } })
+    }
+
+    return await this.Board.findById(boardId)
   }
 
   async createBoard(data) {
-    const board = new Board(data)
+    const board = new this.Board(data)
     return await board.save()
   }
 
@@ -48,38 +59,19 @@ class BoardService {
     return { success: true }
   }
 
-  async likeBoard({ userId, boardId }) {
-    //트랜잭션 시작
-    const session = await mongoose.startSession()
-    // session.startTransaction()
+  async handleLike({ userId, boardId }) {
+    return await this.LikeService.toggleLikeBoard({ userId, boardId })
+  }
 
-    try {
-      // await this.Likes.create([{ userId, boardId }]).session(session)
-      // await this.Board.findByIdAndUpdate(boardId, {
-      //   $inc: { likesCnt: 1 },
-      // }).session(session)
+  async selectBoard({ boardId }) {
+    const board = await this.Board.findById(boardId)
 
-      // await session.commitTransaction()
-
-      await session.withTransaction(async () => {
-        await this.Likes.create({ userId, boardId }).session(session)
-
-        await this.Board.updateOne(
-          { _id: boardId },
-          { $inc: { likesCnt: 1 } }
-        ).session(session)
-      })
-      session.endSession()
-
-      return { success: true }
-    } catch (err) {
-      await session.abortTransaction()
-      session.endSession()
-      if (err.code == 11000) {
-        throw { status: 400, message: "이미 처리된 좋아요" }
-      }
-      throw err
+    if (!board) {
+      throw new Error("board 없음")
     }
+
+    board.isSelected = true
+    await board.save()
   }
 }
 

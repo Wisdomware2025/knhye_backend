@@ -1,14 +1,15 @@
-import User from "../../../models/User"
-import * as UserService from "../../../services/user/profile/index"
+import User from "../../../models/user/User.js"
+import ProfileService from "../../../services/user/profile/index.js"
 
-const userService = new UserService({
+const profileService = new ProfileService({
   User,
 })
 
 // 유저 프로필 조회
 export async function getProfile(req, res) {
   try {
-    const user = await UserService.getUserProfile(req.user.id)
+    const userId = req.params.userId
+    const user = await profileService.getUserProfile(userId)
     res.status(200).json(user)
   } catch (err) {
     console.log(err)
@@ -30,8 +31,9 @@ export async function getProfile(req, res) {
 //유저 프로필 수정
 export async function updateProfileSetting(req, res) {
   try {
+    const userId = req.params.userId
     const { username, profileImg, intro } = req.body
-    const updatedUser = await UserService.updateUserProfile(req.user.id, {
+    const updatedUser = await profileService.updateUserProfile(userId, {
       username,
       profileImg,
       intro,

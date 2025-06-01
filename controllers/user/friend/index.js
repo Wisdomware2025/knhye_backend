@@ -1,5 +1,5 @@
-import FriendService from "../../../services/user/friend"
-import User from "../../../models/user/User"
+import FriendService from "../../../services/user/friend/index.js"
+import User from "../../../models/user/User.js"
 
 const friendService = new FriendService({
   User,

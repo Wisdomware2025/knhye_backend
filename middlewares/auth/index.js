@@ -11,13 +11,14 @@ const authMiddleware = (req, res, next) => {
       message: "인증 실패.",
     })
   }
+  let decoded
 
   try {
     // Bearer 제거 후 토큰 추출
     const actualToken = token.split(" ")[1]
 
     // 토큰 검증
-    const decoded = verify(actualToken, process.env.JWT_SECRET)
+    decoded = verify(actualToken, process.env.JWT_SECRET)
   } catch (error) {
     res.status(401).json({
       message: "유효하지 않은 토큰입니다.",

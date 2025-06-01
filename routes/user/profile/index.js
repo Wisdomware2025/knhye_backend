@@ -6,8 +6,8 @@ import authMiddleware from "../../../middlewares/auth/index.js"
 import { Router } from "express"
 const router = Router()
 
-router.get("/", getProfile)
+router.get("/:userId", getProfile)
 
-router.put("/setting", authMiddleware, updateProfileSetting)
+router.put("/:userId/setting", authMiddleware, updateProfileSetting)
 
 export default router

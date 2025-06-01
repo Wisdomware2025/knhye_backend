@@ -1,13 +1,10 @@
 import express, { json, urlencoded } from "express"
 
 import cookieParser from "cookie-parser"
-
-// const socket = require("socket.io")
-import { createServer } from "http"
-
-import connDB from "./config/db.js"
+import bodyParser from "body-parser"
 
 import authRoutes from "./routes/user/auth/index.js"
+import profileRoutes from "./routes/user/profile/index.js"
 import boardRoutes from "./routes/board/index.js"
 import scheduleRoutes from "./routes/schedule/index.js"
 import searchRoutes from "./routes/search/index.js"
@@ -15,24 +12,23 @@ import reviewRoutes from "./routes/review/index.js"
 import friendRoutes from "./routes/user/friend/index.js"
 
 import dotenv from "dotenv"
+import connectDB from "./config/db.js"
 dotenv.config()
 
 const app = express()
 const port = process.env.PORT
 
-const server = createServer(app)
-//express 서버 위에 WebSocket 서버를 올림
-//클라이언트와 연결할 수 있도록 cors 설정
-// const io = socket(server, { cors: { origin: "*" } })
-
 //Middleware 설정
 app.use(json())
 app.use(cookieParser())
-app.use(urlencoded({ extended: true }))
 
-connDB() // MongoDB 연결
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.json())
+
+connectDB() // MongoDB 연결
 
 app.use("/auth", authRoutes)
+app.use("/profile", profileRoutes)
 app.use("/boards", boardRoutes)
 app.use("/schedules", scheduleRoutes)
 app.use("/search", searchRoutes)

@@ -1,16 +1,21 @@
-import { sign, verify } from "jsonwebtoken"
+import pkg from "jsonwebtoken"
+import dotenv from "dotenv"
+dotenv.config()
+
+const { sign, verify } = pkg
 
 const secretKey = process.env.JWT_SECRET_KEY
 
 //토큰 발행
-const generateToken = (payload) => {
+export const generateToken = (payload) => {
+  console.log("paload : ", payload)
   const token = sign(payload, secretKey, { expiresIn: "1h" })
 
   return token
 }
 
 // 새로운 토큰 생성 함수
-const refreshToken = (token) => {
+export const refreshToken = (token) => {
   try {
     // 기존 토큰의 유효성 검사 및 디코딩
     const decoded = verify(token, secretKey)
@@ -30,5 +35,3 @@ const refreshToken = (token) => {
     return null
   }
 }
-
-export default { generateToken, refreshToken }
