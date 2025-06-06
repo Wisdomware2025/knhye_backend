@@ -1,3 +1,5 @@
+import mongoose from "mongoose"
+
 class LikeService {
   constructor({ Like, Board, Review }) {
     this.Like = Like

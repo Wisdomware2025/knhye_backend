@@ -76,6 +76,7 @@ class AuthService {
 
       const payload = {
         userId: user._id,
+        username: user.username,
         phoneNum: user.phoneNum,
         inputCode: user.inputCode,
       }

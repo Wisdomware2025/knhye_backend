@@ -1,5 +1,6 @@
 import { Router } from "express"
 import {
+  getAllBoards,
   getBoardsByUserId,
   getBoardById,
   createBoard,
@@ -7,6 +8,8 @@ import {
   deleteBoard,
   likeOneBoard,
   selectOneBoard,
+  getAllFarmerBoards,
+  getAllWorkerBoards,
 } from "../../controllers/board/index.js"
 import authMiddleware from "../../middlewares/auth/index.js"
 import { validateFarmerBoard } from "../../middlewares/board/index.js"
@@ -14,6 +17,9 @@ import { validateWorkerBoard } from "../../middlewares/board/index.js"
 
 const router = Router()
 
+router.get("/", getAllBoards)
+router.get("/farmer", getAllFarmerBoards)
+router.get("/worker", getAllWorkerBoards)
 router.get("/:userId", getBoardsByUserId)
 router.get("/:boardId", getBoardById)
 router.post("/farmer", authMiddleware, validateFarmerBoard, createBoard)

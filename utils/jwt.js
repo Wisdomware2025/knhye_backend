@@ -8,7 +8,6 @@ const secretKey = process.env.JWT_SECRET_KEY
 
 //토큰 발행
 export const generateToken = (payload) => {
-  console.log("paload : ", payload)
   const token = sign(payload, secretKey, { expiresIn: "1h" })
 
   return token
@@ -22,7 +21,7 @@ export const refreshToken = (token) => {
 
     // 새로운 페이로드 생성
     const payload = {
-      userId: decoded.userId,
+      userId: decoded._id,
       isAdmin: decoded.isAdmin,
     }
 

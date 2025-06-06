@@ -3,14 +3,70 @@ function getUserIP(req) {
   return addr
 }
 
+import LikeService from "../like/index.js"
+import Like from "../../models/like/Like.js"
+import Board from "../../models/board/Board.js"
+
+const likeService = new LikeService({
+  Like,
+  Board,
+})
+
 class BoardService {
-  constructor({ Board, LikeService }) {
+  constructor({ Board }) {
     this.Board = Board
-    this.LikeService = LikeService
+  }
+
+  async findAllBoards() {
+    const boards = await this.Board.find()
+    const formatBoards = boards.map((boards) => ({
+      ...boards.toObject(),
+      _id: boards._id.toString(),
+    }))
+
+    return formatBoards
+  }
+
+  async findFarmerBoards() {
+    const boards = await this.Board.find({ role: "farmer" })
+    const formatBoards = boards.map((boards) => ({
+      title: boards.title,
+      authorName: boards.authorName,
+      createdAt: boards.createdAt,
+      likesCnt: boards.likesCnt,
+      viewCnt: boards.viewCnt,
+      comments: boards.comments,
+      image: boards.image,
+      _id: boards._id.toString(),
+    }))
+
+    return formatBoards
+  }
+
+  async findWorkerBoards() {
+    const boards = await this.Board.find({ role: "worker" })
+    const formatBoards = boards.map((boards) => ({
+      title: boards.title,
+      authorName: boards.authorName,
+      createdAt: boards.createdAt,
+      likesCnt: boards.likesCnt,
+      viewCnt: boards.viewCnt,
+      comments: boards.comments,
+      image: boards.image,
+      _id: boards._id.toString(),
+    }))
+
+    return formatBoards
   }
 
   async findBoardsByUserId(userId) {
-    return await this.Board.find(userId)
+    const boards = await this.Board.find(userId)
+    const formatBoards = boards.map((boards) => ({
+      ...boards.toObject(),
+      _id: boards._id.toString(),
+    }))
+
+    return formatBoards
   }
 
   async findOneBoard(boardId) {
@@ -24,7 +80,13 @@ class BoardService {
       await this.Board.updateOne({ boardId }, { $inc: { viewCnt: 1 } })
     }
 
-    return await this.Board.findById(boardId)
+    const board = await this.Board.findById(boardId)
+    const formatBoard = board.map((boards) => ({
+      ...board.toObject(),
+      _id: boards._id.toString(),
+    }))
+
+    return formatBoard
   }
 
   async createBoard(data) {
@@ -32,35 +94,40 @@ class BoardService {
     return await board.save()
   }
 
-  async updateBoard({ id, updateData, user }) {
-    const board = await this.Board.findById(id)
-
-    if (!board || board.author.toString() !== user._id.toString()) {
-      throw { status: 403, message: "권한이 없습니다." }
-    }
+  async updateBoard({ boardId, data, user }) {
+    const board = await this.Board.findById(boardId)
 
     if (!board) throw { status: 404, message: "게시글이 없습니다." }
 
-    schedule.set({
-      updateData,
+    if (board.author.toString() !== user.toString()) {
+      throw { status: 403, message: "권한이 없습니다." }
+    }
+
+    board.set({
+      ...data,
     })
 
     return await board.save()
   }
 
-  async deleteBoard({ id, user }) {
-    const board = await this.Board.findById(id)
+  async deleteBoard({ boardId, user }) {
+    const stringBoardId = boardId.toString()
+    const board = await this.Board.findById(stringBoardId)
 
-    if (!board || board.author.toString() !== user._id.toString()) {
+    if (!board) {
+      throw { status: 404, message: "게시글이 없습니다." }
+    }
+
+    if (board.author.toString() !== user.toString()) {
       throw { status: 403, message: "권한이 없습니다." }
     }
 
-    await this.Board.findByIdAndDelete(id)
+    await this.Board.findByIdAndDelete(stringBoardId)
     return { success: true }
   }
 
   async handleLike({ userId, boardId }) {
-    return await this.LikeService.toggleLikeBoard({ userId, boardId })
+    return await likeService.toggleLikeBoard({ userId, boardId })
   }
 
   async selectBoard({ boardId }) {

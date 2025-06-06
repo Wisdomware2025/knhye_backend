@@ -10,10 +10,10 @@ export async function getProfile(req, res) {
   try {
     const userId = req.params.userId
     const user = await profileService.getUserProfile(userId)
-    res.status(200).json(user)
+    return res.status(200).json(user)
   } catch (err) {
     console.log(err)
-    res.status(500).json({ message: "프로필 조회 실패" })
+    return res.status(500).json({ message: "프로필 조회 실패" })
   }
 }
 
@@ -39,9 +39,9 @@ export async function updateProfileSetting(req, res) {
       intro,
     })
 
-    res.status(200).json(updatedUser)
+    return res.status(200).json(updatedUser)
   } catch (err) {
     console.log(err)
-    res.status(400).json({ message: "업데이트 실패: " })
+    return res.status(400).json({ message: "업데이트 실패: " })
   }
 }

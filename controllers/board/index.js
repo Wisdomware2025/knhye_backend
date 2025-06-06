@@ -5,14 +5,44 @@ const boardService = new BoardService({
   Board,
 })
 
+export const getAllBoards = async (req, res) => {
+  try {
+    const boards = await boardService.findAllBoards()
+
+    return res.json(boards)
+  } catch (err) {
+    return res.status(err.status || 500).json({ message: err })
+  }
+}
+
+export const getAllFarmerBoards = async (req, res) => {
+  try {
+    const boards = await boardService.findFarmerBoards()
+
+    return res.json(boards)
+  } catch (err) {
+    return res.status(err.status || 500).json({ message: err })
+  }
+}
+
+export const getAllWorkerBoards = async (req, res) => {
+  try {
+    const boards = await boardService.findWorkerBoards()
+
+    return res.json(boards)
+  } catch (err) {
+    return res.status(err.status || 500).json({ message: err })
+  }
+}
+
 //유저의 모든 게시글 조회
 export const getBoardsByUserId = async (req, res) => {
   try {
     const userId = req.params
     const boards = await boardService.findBoardsByUserId(userId)
-    res.json(boards)
+    return res.json(boards)
   } catch (err) {
-    res.status(500).json({ message: err })
+    return res.status(500).json({ message: err })
   }
 }
 
@@ -28,10 +58,10 @@ export const getBoardById = async (req, res) => {
         .json({ message: "해당 게시글이 없거나 유저가 일치하지 않습니다." })
     }
 
-    res.json(board)
+    return res.json(board)
   } catch (err) {
     console.log(err)
-    res.status(500).json({ message: "서버 오류" })
+    return res.status(500).json({ message: "서버 오류" })
   }
 }
 
@@ -39,11 +69,8 @@ export const createBoard = async (req, res) => {
   try {
     const data = {
       ...req.body,
-      author: req.user.id,
-    }
-
-    if (!data.author) {
-      return res.status(401).json({ message: "로그인 해주세요" })
+      author: req.user.userId,
+      authorName: req.user.username,
     }
 
     const newBoard = await boardService.createBoard(data)
@@ -58,11 +85,10 @@ export const updateBoard = async (req, res) => {
   try {
     const data = {
       ...req.body,
-      author: req.user.id,
     }
-
+    const user = req.user.userId
     const { boardId } = req.params
-    const board = await boardService.updateBoard(boardId, data)
+    const board = await boardService.updateBoard({ boardId, data, user })
 
     if (!board) {
       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." })
@@ -78,7 +104,8 @@ export const updateBoard = async (req, res) => {
 export const deleteBoard = async (req, res) => {
   try {
     const { boardId } = req.params
-    const deleted = await boardService.deleteBoard(boardId, req.user.id)
+    const user = req.user.userId
+    const deleted = await boardService.deleteBoard({ boardId, user })
 
     if (!deleted) {
       return res.status(404).json({ message: "게시글을 찾을 수 없습니다." })
@@ -102,6 +129,7 @@ export const likeOneBoard = async (req, res) => {
 
     return res.status(200).json({ message: "게시글 좋아요 수 증가" })
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ message: "서버 오류" })
   }
 }
