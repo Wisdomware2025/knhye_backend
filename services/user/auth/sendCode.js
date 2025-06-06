@@ -8,8 +8,8 @@ function generateAuthCode() {
 }
 
 function convertPhoneNum(phoneNum) {
-  if (phoneNum.toString.startsWith("+82")) {
-    return phoneNum.slice(1)
+  if (phoneNum.toString().startsWith("+82")) {
+    return phoneNum.slice(3)
   }
   return phoneNum
 }
@@ -20,7 +20,6 @@ class SendCodeService {
   }
 
   async sendAligo(phoneNum) {
-    console.log("알리고 함수 호출됨")
     const authCode = generateAuthCode()
     const convertedPhoneNum = await convertPhoneNum(phoneNum)
 
@@ -46,7 +45,6 @@ class SendCodeService {
       )
 
       const resData = response.data
-      console.log("Aligo 응답:", resData)
 
       if (resData.result_code === "1") {
         await this.AuthCode.deleteMany({ phone_number: phoneNum })
@@ -64,7 +62,6 @@ class SendCodeService {
         throw new Error(resData.message)
       }
     } catch (err) {
-      console.error("알리고 발송 에러:", err)
       throw err
     }
   }
