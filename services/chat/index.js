@@ -1,36 +1,34 @@
-// import axios from "axios"
-// import { format } from "data-fns"
-// import io, { Socket } from "socket.io"
+class ChatService {
+  constructor({ Message }) {
+    this.Message = Message
+  }
 
-// const users = {}
-// const chatRooms = {}
+  async saveMessage(senderId, receiverId, message) {
+    const newMessage = new this.Message({
+      sender_id: senderId,
+      receiver_id: receiverId,
+      message: message,
+    })
 
-// class ChatService {
-//   async joinRoom(socket, { roomId, userId }) {
-//     socket.join(roomId)
-//     users[socket.id] = userId
+    await newMessage.save()
 
-//     // 채팅방이 없을 경우 새로 생성함
-//     if (!chatRooms[roomId]) {
-//       chatRooms[roomId] = []
-//     }
+    // populate로 username도 함께 반환
+    return newMessage
+      .populate("sender_id", "username")
+      .populate("receiver_id", "username")
+  }
 
-//     return chatRooms[roomId]
-//   }
+  async getHistory(userId1, userId2) {
+    return await this.Message.find({
+      $or: [
+        { sender_id: userId1, receiver_id: userId2 },
+        { sender_id: userId1, receiver_id: userId2 },
+      ],
+    })
+      .sort({ timeStamp: 1 })
+      .populate("sender_id", "username")
+      .populate("receiver_id", "username")
+  }
+}
 
-//   async sendMessage(io, { roomId, sender, content, time }) {
-//     const date = format(new Date(time), "yyyy-mm-dd")
-
-//     const lastMessage = chatRooms[roomId] || []
-//     //이전 날짜 확인
-//     const lastDate = lastMessage.length
-//       ? format(new Date(lastMessage[lastMessage.length - 1].time), "yyyy-mm-dd")
-//       : null
-//     const currentDate = lastDate !== date
-
-//     const message = { sender, content, time, currentDate }
-//     chatRooms[roomId].push(message)
-//   }
-// }
-
-// export default ChatService
+export default ChatService

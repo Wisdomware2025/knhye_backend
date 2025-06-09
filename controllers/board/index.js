@@ -1,7 +1,14 @@
 import BoardService from "../../services/board/index.js"
 import Board from "../../models/board/Board.js"
+import LikeService from "../../services/like/index.js"
+import Like from "../../models/like/Like.js"
 
 const boardService = new BoardService({
+  Board,
+})
+
+const likeService = new LikeService({
+  Like,
   Board,
 })
 
@@ -121,13 +128,13 @@ export const deleteBoard = async (req, res) => {
 export const likeOneBoard = async (req, res) => {
   try {
     const { userId, boardId } = req.params
-    const board = await boardService.handleLike({ userId, boardId })
+    const board = await likeService.toggleLikeBoard({ userId, boardId })
 
     if (!board) {
       return res.stauts(404).json({ message: "게시글을 찾을 수 없음" })
     }
 
-    return res.status(200).json({ message: "게시글 좋아요 수 증가" })
+    return res.status(200).json({ message: board.message })
   } catch (err) {
     console.log(err)
     return res.status(500).json({ message: "서버 오류" })

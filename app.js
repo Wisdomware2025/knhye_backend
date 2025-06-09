@@ -14,6 +14,7 @@ import scheduleRoutes from "./routes/schedule/index.js"
 import searchRoutes from "./routes/search/index.js"
 import reviewRoutes from "./routes/review/index.js"
 import friendRoutes from "./routes/user/friend/index.js"
+import chatRoutes from "./routes/chat/index.js"
 
 import connectDB from "./config/db.js"
 connectDB() // MongoDB 연결
@@ -36,23 +37,31 @@ app.use("/schedules", scheduleRoutes)
 app.use("/search", searchRoutes)
 app.use("/reviews", reviewRoutes)
 app.use("/friends", friendRoutes)
+app.use("/chats", chatRoutes)
 
 // http + socket 통합 서버 생성
 const server = http.createServer(app)
 
-// // 소켓 서버 설정
-// import { Server } from "socket.io"
+// 소켓 서버 설정
+import { Server } from "socket.io"
 
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["*"],
-//   },
-// })
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+})
 
-// io.on("connection", (socket) => {
-//   console.log("a user connected")
-// })
+let socketConnected = new Set()
+
+io.on("connection", (socket) => {
+  console.log("a user connected")
+  socketConnected.add(socket.id)
+
+  socket.on("disconnect", () => {
+    socketConnected.delete(socket.id)
+  })
+})
 
 server.listen(port, () => {
   console.log(`Running at http://localhost:${port}`)

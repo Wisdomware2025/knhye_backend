@@ -126,10 +126,6 @@ class BoardService {
     return { success: true }
   }
 
-  async handleLike({ userId, boardId }) {
-    return await likeService.toggleLikeBoard({ userId, boardId })
-  }
-
   async selectBoard({ boardId }) {
     const board = await this.Board.findById(boardId)
 

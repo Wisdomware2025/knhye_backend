@@ -88,6 +88,16 @@ class AuthService {
       throw new Error(err.message || "로그인 중 오류 발생")
     }
   }
+
+  async findUserById(userId) {
+    const user = User.findById(userId)
+
+    if (!user) {
+      throw new Error({ status: 404, message: "일치하는 유저가 없음" })
+    }
+
+    return true
+  }
 }
 
 export default AuthService
