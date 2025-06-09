@@ -42,6 +42,7 @@ app.use("/chats", chatRoutes)
 // http + socket 통합 서버 생성
 const server = http.createServer(app)
 
+<<<<<<< HEAD
 // 소켓 서버 설정
 import { Server } from "socket.io"
 
@@ -62,6 +63,21 @@ io.on("connection", (socket) => {
     socketConnected.delete(socket.id)
   })
 })
+=======
+// // 소켓 서버 설정
+// import { Server } from "socket.io"
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["*"],
+//   },
+// })
+
+// io.on("connection", (socket) => {
+//   console.log("a user connected")
+// })
+>>>>>>> 110da3edfc101ef4f2d3b09149df7bed39c6f281
 
 server.listen(port, () => {
   console.log(`Running at http://localhost:${port}`)

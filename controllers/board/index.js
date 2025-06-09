@@ -7,11 +7,14 @@ const boardService = new BoardService({
   Board,
 })
 
+<<<<<<< HEAD
 const likeService = new LikeService({
   Like,
   Board,
 })
 
+=======
+>>>>>>> 110da3edfc101ef4f2d3b09149df7bed39c6f281
 export const getAllBoards = async (req, res) => {
   try {
     const boards = await boardService.findAllBoards()
