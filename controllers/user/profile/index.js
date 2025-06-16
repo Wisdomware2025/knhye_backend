@@ -5,16 +5,16 @@ const profileService = new ProfileService({
   User,
 })
 
-export async function getFamousUsers(req, res) {
+export async function getPopularUsers(req, res) {
   try {
     const role = req.params
-    const famousUsers = await profileService.getFamousUsers(role)
+    const popularUsers = await profileService.getPopularUsers(role)
 
-    if (!famousUsers) {
+    if (!popularUsers) {
       return res.status(404).json({ message: "유저를 찾을 수 없음" })
     }
 
-    return res.status(200).json(famousUsers)
+    return res.status(200).json(popularUsers)
   } catch (err) {
     console.log(err)
     return res.status(500).json({ message: "서버 오류" })
