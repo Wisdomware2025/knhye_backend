@@ -7,14 +7,11 @@ const boardService = new BoardService({
   Board,
 })
 
-<<<<<<< HEAD
 const likeService = new LikeService({
   Like,
   Board,
 })
 
-=======
->>>>>>> 110da3edfc101ef4f2d3b09149df7bed39c6f281
 export const getAllBoards = async (req, res) => {
   try {
     const boards = await boardService.findAllBoards()
@@ -149,11 +146,11 @@ export const selectOneBoard = async (req, res) => {
     const boardId = req.params
     const board = await boardService.selectBoard(boardId)
 
-    if (!board) {
+    if (!board.success) {
       return res.status(404).json({ message: "게시글 없음" })
     }
 
-    return res.status(200).json({ message: "구인 완료됨" })
+    return res.status(200).json({ message: board.message })
   } catch (err) {
     return res.status(500).json({ message: "서버 오류" })
   }

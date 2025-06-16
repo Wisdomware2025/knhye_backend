@@ -54,9 +54,14 @@ class LikeService {
   }
 
   async toggleLikeReview({ userId, reviewId }) {
+    // reviewId 값만 꺼냄
+    if (typeof reviewId === "object" && reviewId.reviewId) {
+      reviewId = reviewId.reviewId
+    }
     const session = await mongoose.startSession()
 
     try {
+      let message
       await session.withTransaction(async () => {
         const existingLike = await this.Like.findOne({
           userId,
@@ -71,7 +76,8 @@ class LikeService {
             { $inc: { likesCnt: -1 } }
           ).session(session)
 
-          return { liked: false, message: "리뷰 좋아요 취소됨" }
+          message = "리뷰 좋아요 취소됨"
+          return { liked: false }
         } else {
           // 좋아요 추가
           await this.Like.create([{ userId, reviewId }], { session })
@@ -80,15 +86,18 @@ class LikeService {
             { $inc: { likesCnt: 1 } }
           ).session(session)
 
-          return { liked: true, message: "리뷰 좋아요 등록됨" }
+          message = "리뷰 좋아요 등록됨"
+          return { liked: true }
         }
       })
 
-      return { success: true }
+      return { message: message }
     } catch (err) {
-      await session.abortTransaction()
       if (err.code === 11000) {
-        throw { status: 400, message: "중복된 좋아요입니다." }
+        console.warn(
+          `Duplicate key error (E11000) for userId: ${userId}, reviewId: ${reviewId}.`,
+          err
+        )
       }
       throw err
     } finally {

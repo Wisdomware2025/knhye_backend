@@ -126,22 +126,25 @@ class BoardService {
     return { success: true }
   }
 
-<<<<<<< HEAD
-=======
-  async handleLike({ userId, boardId }) {
-    return await likeService.toggleLikeBoard({ userId, boardId })
-  }
-
->>>>>>> 110da3edfc101ef4f2d3b09149df7bed39c6f281
   async selectBoard({ boardId }) {
+    let message
     const board = await this.Board.findById(boardId)
 
     if (!board) {
       throw new Error("board 없음")
     }
 
-    board.isSelected = true
+    if (board.isSelected) {
+      board.isSelected = false
+      message = "구인 취소됨"
+    } else {
+      board.isSelected = true
+      message = "구인 완료됨"
+    }
+
     await board.save()
+
+    return { success: true, message: message }
   }
 }
 

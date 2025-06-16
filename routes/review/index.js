@@ -12,14 +12,9 @@ import { Router } from "express"
 const router = Router()
 
 router.get("/:receiverId", getReviewsByReceiverId)
-router.post(
-  "/:authorId/:receiverId",
-  authMiddleware,
-  validateReview,
-  createReview
-)
-router.put("/:authorId/:reviewId", authMiddleware, validateReview, updateReview)
-router.delete("/:authorId/:reviewId", authMiddleware, deleteReview)
-router.post("/:reviewId/:userId", authMiddleware, likeOneReview)
+router.post("/:receiverId", authMiddleware, validateReview, createReview)
+router.put("/:reviewId", authMiddleware, validateReview, updateReview)
+router.delete("/:reviewId", authMiddleware, deleteReview)
+router.post("/likes/:reviewId", authMiddleware, likeOneReview)
 
 export default router

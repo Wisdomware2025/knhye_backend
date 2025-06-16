@@ -1,75 +1,46 @@
+async function checkReviewAndAuthor({ reviewId, authorId }) {
+  const review = await this.Review.findOne({ _id: "684b7d23403d0e1d85ec0f00" })
+
+  if (!review) {
+    throw { status: 404, message: "리뷰가 없습니다." }
+  }
+
+  if (review.author.toString() !== authorId) {
+    throw { status: 403, message: "권한이 없습니다." }
+  }
+
+  return review
+}
+
 class ReviewService {
   constructor({ Review, LikeService }) {
     this.Review = Review
     this.LikeService = LikeService
-  }
-
-  async checkReviewAndAuthor(reviewId, authorId) {
-    const review = await this.Review.findById(reviewId)
-
-    if (!review) {
-      throw { status: 404, message: "리뷰가 없습니다." }
-    }
-
-    if (review.author.toString() !== authorId) {
-      throw { status: 403, message: "권한이 없습니다." }
-    }
-
-    return review
+    this.checkReviewAndAuthor = checkReviewAndAuthor
   }
 
   async getReviews(receiverId) {
     return await this.Review.find({ receiver: receiverId })
   }
 
-  async createReview(
-    role,
-    isSatisfaction,
-    content,
-    image,
-    authorId,
-    receiverId
-  ) {
-    const review = new this.Review({
-      role,
-      isSatisfaction,
-      content,
-      image,
-      author: authorId,
-      receiver: receiverId,
-    })
+  async createReview(data) {
+    const review = new this.Review(data)
 
-    return review.save()
+    return await review.save()
   }
 
-  async updateReview({
-    reviewId,
-    role,
-    isSatisfaction,
-    content,
-    image,
-    authorId,
-  }) {
-    const review = await checkReviewAndAuthor(reviewId, authorId)
+  async updateReview({ data, authorId, reviewId }) {
+    const review = await this.checkReviewAndAuthor({ reviewId, authorId })
 
-    review.set({
-      role,
-      isSatisfaction,
-      content,
-      image,
-    })
+    review.set({ ...data })
 
     return await review.save()
   }
 
   async deleteReview({ reviewId, authorId }) {
-    const review = await checkReviewAndAuthor(reviewId, authorId)
+    const review = await this.checkReviewAndAuthor({ reviewId, authorId })
 
     return await review.deleteOne()
-  }
-
-  async handleLike({ userId, reviewId }) {
-    return await this.LikeService.toggleLikeReview({ userId, reviewId })
   }
 }
 

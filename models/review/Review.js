@@ -1,11 +1,13 @@
 import { Schema, model } from "mongoose"
 
 const ReviewSchema = new Schema({
-  //true : 농부, false : 근로자
-  role: { type: Boolean, required: true, default: true },
+  role: { type: String, required: true },
   isSatisfaction: { type: Boolean, required: true, default: true },
   content: { type: String, required: true },
-  image: { type: String },
+  image: {
+    type: [String],
+    default: [],
+  },
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   authorName: { type: String, ref: "User", required: true },
   receiver: { type: Schema.Types.ObjectId, ref: "User", required: true },

@@ -5,11 +5,31 @@ const profileService = new ProfileService({
   User,
 })
 
+export async function getFamousUsers(req, res) {
+  try {
+    const role = req.params
+    const famousUsers = await profileService.getFamousUsers(role)
+
+    if (!famousUsers) {
+      return res.status(404).json({ message: "유저를 찾을 수 없음" })
+    }
+
+    return res.status(200).json(famousUsers)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "서버 오류" })
+  }
+}
+
 // 유저 프로필 조회
 export async function getProfile(req, res) {
   try {
     const userId = req.params.userId
     const user = await profileService.getUserProfile(userId)
+
+    if (!user) {
+      return res.status(404).json({ message: "유저를 찾을 수 없습니다." })
+    }
     return res.status(200).json(user)
   } catch (err) {
     console.log(err)
@@ -38,6 +58,10 @@ export async function updateProfileSetting(req, res) {
       profileImg,
       intro,
     })
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "유저를 찾을 수 없습니다." })
+    }
 
     return res.status(200).json(updatedUser)
   } catch (err) {

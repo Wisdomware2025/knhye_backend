@@ -15,6 +15,7 @@ import searchRoutes from "./routes/search/index.js"
 import reviewRoutes from "./routes/review/index.js"
 import friendRoutes from "./routes/user/friend/index.js"
 import chatRoutes from "./routes/chat/index.js"
+import translateRoutes from "./routes/translate/index.js"
 
 import connectDB from "./config/db.js"
 connectDB() // MongoDB 연결
@@ -38,13 +39,14 @@ app.use("/search", searchRoutes)
 app.use("/reviews", reviewRoutes)
 app.use("/friends", friendRoutes)
 app.use("/chats", chatRoutes)
+app.use("/translate", translateRoutes)
 
 // http + socket 통합 서버 생성
 const server = http.createServer(app)
 
-<<<<<<< HEAD
 // 소켓 서버 설정
 import { Server } from "socket.io"
+import { initChatSocket } from "./sockets/index.js"
 
 const io = new Server(server, {
   cors: {
@@ -53,31 +55,7 @@ const io = new Server(server, {
   },
 })
 
-let socketConnected = new Set()
-
-io.on("connection", (socket) => {
-  console.log("a user connected")
-  socketConnected.add(socket.id)
-
-  socket.on("disconnect", () => {
-    socketConnected.delete(socket.id)
-  })
-})
-=======
-// // 소켓 서버 설정
-// import { Server } from "socket.io"
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["*"],
-//   },
-// })
-
-// io.on("connection", (socket) => {
-//   console.log("a user connected")
-// })
->>>>>>> 110da3edfc101ef4f2d3b09149df7bed39c6f281
+initChatSocket(io)
 
 server.listen(port, () => {
   console.log(`Running at http://localhost:${port}`)
