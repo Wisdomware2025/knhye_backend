@@ -3,7 +3,7 @@ class ProfileService {
     this.User = User
   }
 
-  async getFamousUsers(role) {
+  async getPopularUsers(role) {
     const users = await this.User.find()
 
     if (!users || !Array.isArray(users)) {
