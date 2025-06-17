@@ -17,10 +17,6 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    // authCode: {
-    //   type: String,
-    //   required: true,
-    // },
     username: {
       type: String,
       // maxlength: 50,
@@ -36,6 +32,18 @@ const UserSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    fcmTokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
   },

@@ -29,10 +29,7 @@ const ScheduleSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  fcmToken: {
-    type: String,
-    required: true,
-  },
+  notificationsSent: { type: Boolean, default: false },
 })
 
 export default model("Schedule", ScheduleSchema)

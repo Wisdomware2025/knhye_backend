@@ -77,3 +77,24 @@ export const login = async (req, res) => {
     res.status(401).json({ message: "인증 실패" })
   }
 }
+
+export const updateFcmToken = async (req, res) => {
+  const { userId, fcmToken } = req.body
+
+  if (!userId || !fcmToken) {
+    return res.status(400).json({ message: "userId, fcmToken 필요" })
+  }
+
+  try {
+    const user = await authService.updateFcmToken({ userId, fcmToken })
+
+    if (!user) {
+      return res.status(404).json({ message: "유저를 찾을 수 없음" })
+    }
+
+    return res.status(200).json({ message: "fcmToken 업데이트 완료" })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "서버오류" })
+  }
+}

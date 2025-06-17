@@ -1,10 +1,11 @@
 import mongoose from "mongoose"
 
 class LikeService {
-  constructor({ Like, Board, Review }) {
+  constructor({ Like, Board, Review, Comment }) {
     this.Like = Like
     this.Board = Board
     this.Review = Review
+    this.Comment = Comment
   }
 
   async toggleLikeBoard({ userId, boardId }) {
@@ -96,6 +97,57 @@ class LikeService {
       if (err.code === 11000) {
         console.warn(
           `Duplicate key error (E11000) for userId: ${userId}, reviewId: ${reviewId}.`,
+          err
+        )
+      }
+      throw err
+    } finally {
+      session.endSession()
+    }
+  }
+
+  async toggleLikeComment({ userId, commentId }) {
+    if (typeof commentId === "object" && commentId.commentId) {
+      commentId = commentId.commentId
+    }
+    const session = await mongoose.startSession()
+
+    try {
+      let message
+      await session.withTransaction(async () => {
+        const existingLike = await this.Like.findOne({
+          userId,
+          commentId,
+        }).session(session)
+
+        if (existingLike) {
+          // 좋아요 취소
+          await this.Like.deleteOne({ _id: existingLike._id }).session(session)
+          await this.Comment.updateOne(
+            { _id: commentId },
+            { $inc: { likesCnt: -1 } }
+          ).session(session)
+
+          message = "리뷰 좋아요 취소됨"
+          return { liked: false }
+        } else {
+          // 좋아요 추가
+          await this.Like.create([{ userId, commentId }], { session })
+          await this.Comment.updateOne(
+            { _id: reviewId },
+            { $inc: { likesCnt: 1 } }
+          ).session(session)
+
+          message = "리뷰 좋아요 등록됨"
+          return { liked: true }
+        }
+      })
+
+      return { message: message }
+    } catch (err) {
+      if (err.code === 11000) {
+        console.warn(
+          `Duplicate key error (E11000) for userId: ${userId}, commentId: ${commentId}.`,
           err
         )
       }

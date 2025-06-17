@@ -3,15 +3,6 @@ function getUserIP(req) {
   return addr
 }
 
-import LikeService from "../like/index.js"
-import Like from "../../models/like/Like.js"
-import Board from "../../models/board/Board.js"
-
-const likeService = new LikeService({
-  Like,
-  Board,
-})
-
 class BoardService {
   constructor({ Board }) {
     this.Board = Board
