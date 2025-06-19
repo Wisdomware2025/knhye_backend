@@ -1,5 +1,6 @@
 import CommentService from "../../services/board/comment.js"
 import Comment from "../../models/board/Comment.js"
+import Like from "../../models/like/Like.js"
 import LikeService from "../../services/like/index.js"
 
 const commentService = new CommentService({
@@ -28,9 +29,26 @@ export const getAllCommentsByBoardId = async (req, res) => {
   }
 }
 
+export const getAllCommentsByUserId = async (req, res) => {
+  try {
+    const userId = req.user.userId
+
+    if (!userId) {
+      return res.status(403).json({ message: "로그인해주세요" })
+    }
+
+    const comments = await commentService.getAllCommentsByUserId(userId)
+
+    return res.json(comments)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "서버 오류" })
+  }
+}
+
 export const createComment = async (req, res) => {
   try {
-    const inputBoardId = req.params
+    const inputBoardId = req.params.boardId
     const data = {
       content: req.body.content,
       author: req.user.userId,
@@ -53,7 +71,7 @@ export const createComment = async (req, res) => {
 
 export const updateComment = async (req, res) => {
   try {
-    const inputCommentId = req.params
+    const inputCommentId = req.params.id
     const data = {
       content: req.body.content,
     }
@@ -76,7 +94,7 @@ export const updateComment = async (req, res) => {
 
 export const deleteComment = async (req, res) => {
   try {
-    const inputCommentId = req.params
+    const inputCommentId = req.params.id
     const user = req.user.userId
 
     if (inputBoardId.length() === 0) {
@@ -94,7 +112,7 @@ export const deleteComment = async (req, res) => {
 
 export const likeOneComment = async (req, res) => {
   try {
-    const commentId = req.params
+    const commentId = req.params.id
     const userId = req.user.userId
 
     const comment = await likeService.toggleLikeComment({ commentId, userId })
@@ -103,7 +121,7 @@ export const likeOneComment = async (req, res) => {
       return res.stauts(404).json({ message: "댓글 찾을 수 없음" })
     }
 
-    return res.status(200).json({ message: comment.message })
+    return res.json(comment)
   } catch (err) {
     console.log(err)
     return res.status(500).json({ message: "서버 오류" })

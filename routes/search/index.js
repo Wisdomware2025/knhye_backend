@@ -4,6 +4,6 @@ import authMiddleware from "../../middlewares/auth/index.js"
 
 const router = Router()
 
-router.get("/", authMiddleware, search)
+router.get("/", search)
 
 export default router

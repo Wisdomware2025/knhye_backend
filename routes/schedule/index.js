@@ -12,11 +12,11 @@ import scheduleMiddleware from "../../middlewares/schedule/index.js"
 import { Router } from "express"
 const router = Router()
 
-router.get("/recent", authMiddleware, getRecentSchedule)
-router.get("/:date", authMiddleware, getScheduleDday)
+router.get("/recent", getRecentSchedule)
+router.get("/:date", getScheduleDday)
 
-router.post("/:date", authMiddleware, scheduleMiddleware, createSchedule)
-router.put("/:date/:id", authMiddleware, scheduleMiddleware, updateSchedule)
-router.delete("/:id", authMiddleware, deleteSchedule)
-router.post("/schedule-job/:id", authMiddleware, scheduleJob)
+router.post("/:date", scheduleMiddleware, createSchedule)
+router.put("/:date/:id", scheduleMiddleware, updateSchedule)
+router.delete("/:id", deleteSchedule)
+router.post("/schedule-job/:id", scheduleJob)
 export default router

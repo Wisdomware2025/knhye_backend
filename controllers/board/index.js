@@ -134,7 +134,7 @@ export const likeOneBoard = async (req, res) => {
       return res.stauts(404).json({ message: "게시글을 찾을 수 없음" })
     }
 
-    return res.status(200).json({ message: board.message })
+    return res.json(board)
   } catch (err) {
     console.log(err)
     return res.status(500).json({ message: "서버 오류" })

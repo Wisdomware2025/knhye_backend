@@ -4,7 +4,7 @@ class TranslateService {
   constructor({ Translation }) {
     this.Translation = Translation
   }
-  async translateText({ texts, prompt, type }) {
+  async translateText({ texts, prompt }) {
     try {
       const messages = [
         {
@@ -40,7 +40,6 @@ class TranslateService {
       await this.Translation.create({
         input: texts,
         output: translatedTexts,
-        type: type,
       })
 
       return translatedTexts
@@ -49,6 +48,8 @@ class TranslateService {
       throw new Error("번역 실패")
     }
   }
+
+  async cancelTranslate({ texts, prompt }) {}
 }
 
 export default TranslateService

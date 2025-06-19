@@ -10,6 +10,7 @@ dotenv.config()
 import authRoutes from "./routes/user/auth/index.js"
 import profileRoutes from "./routes/user/profile/index.js"
 import boardRoutes from "./routes/board/index.js"
+import commentRoutes from "./routes/board/comment.js"
 import scheduleRoutes from "./routes/schedule/index.js"
 import searchRoutes from "./routes/search/index.js"
 import reviewRoutes from "./routes/review/index.js"
@@ -34,6 +35,7 @@ app.use(express.json())
 app.use("/auth", authRoutes)
 app.use("/profile", profileRoutes)
 app.use("/boards", boardRoutes)
+app.use("/comments", commentRoutes)
 app.use("/schedules", scheduleRoutes)
 app.use("/search", searchRoutes)
 app.use("/reviews", reviewRoutes)

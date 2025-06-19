@@ -17,6 +17,18 @@ class CommentService {
     return comments
   }
 
+  async getAllCommentsByUserId(userId) {
+    const comments = await this.Comment.find({
+      author: userId,
+    })
+
+    if (!comments) {
+      throw new Error("댓글이 없습니다.")
+    }
+
+    return comments
+  }
+
   async createComment({ inputBoardId, data }) {
     const formatId = new mongoose.Types.ObjectId(inputBoardId)
 

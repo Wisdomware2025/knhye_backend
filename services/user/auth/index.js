@@ -1,10 +1,11 @@
-import { generateToken } from "../../../utils/jwt.js"
+import { generateTokens, refreshAccessToken } from "../../../utils/jwt.js"
 
 class AuthService {
   constructor({ User, AuthCode }) {
     this.User = User
     this.AuthCode = AuthCode
   }
+
   // 인증코드 검증하는 로직
   async verifyAuthCode({ phoneNum, inputCode }) {
     try {
@@ -30,23 +31,20 @@ class AuthService {
 
       return true
     } catch (err) {
-      throw new Error()
+      throw new Error("인증 코드 확인 중 알 수 없는 오류 발생")
     }
   }
 
   // 회원가입 서비스
-  async signup({ country, phoneNum, inputCode, username, profileImg, intro }) {
+  async signup({ phoneNum, username, profileImg, intro }) {
     try {
-      const isChecked = await this.verifyAuthCode({ phoneNum, inputCode })
-
-      if (!isChecked) {
-        throw new Error("인증 실패")
+      const existingUser = await this.User.findOne({ phoneNum })
+      if (existingUser) {
+        throw new Error("이미 가입된 전화번호입니다.")
       }
 
       const newUser = await new User({
-        country,
         phoneNum,
-        inputCode,
         username,
         profileImg,
         intro,
@@ -59,13 +57,8 @@ class AuthService {
   }
 
   // 로그인 서비스
-  async login({ phoneNum, inputCode }) {
+  async login({ phoneNum }) {
     try {
-      const isChecked = await this.verifyAuthCode({ phoneNum, inputCode })
-
-      if (!isChecked) {
-        throw new Error(err.message)
-      }
       const user = await this.User.findOne({ phoneNum })
       if (!user) {
         throw new Error("일치하는 유저가 없음")
@@ -75,14 +68,23 @@ class AuthService {
         userId: user._id,
         username: user.username,
         phoneNum: user.phoneNum,
-        inputCode: user.inputCode,
       }
 
-      const token = generateToken(payload)
+      const { accessToken, refreshToken } = generateTokens(payload)
 
-      return { message: "로그인 성공", token }
+      return { message: "로그인 성공", accessToken, refreshToken }
     } catch (err) {
       throw new Error(err.message || "로그인 중 오류 발생")
+    }
+  }
+
+  async refreshUserToken(refreshToken) {
+    try {
+      const newAccessToken = refreshAccessToken(refreshToken) // utils/jwt.js의 함수 호출
+      return { accessToken: newAccessToken }
+    } catch (err) {
+      // jwt.js에서 던진 에러를 다시 던져서 상위 로직에서 처리
+      throw new Error(err.message || "토큰 갱신 중 오류 발생")
     }
   }
 
@@ -117,7 +119,7 @@ class AuthService {
     }
 
     await user.save()
-    return res.json({ message: "FCM 토큰이 성공적으로 업데이트되었습니다." })
+    return { message: "FCM 토큰이 성공적으로 업데이트되었습니다." }
   }
 }
 

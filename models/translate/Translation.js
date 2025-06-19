@@ -6,6 +6,12 @@ const TranslationSchema = new mongoose.Schema(
     output: { type: String },
     type: { type: String, required: true }, // "country", "korean", "foreign"
     targetLang: { type: String, required: true },
+
+    isTranslationEnabled: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   {
     timestamps: true,

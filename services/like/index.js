@@ -12,7 +12,6 @@ class LikeService {
     const session = await mongoose.startSession()
 
     try {
-      let responseMessage = ""
       await session.withTransaction(async () => {
         const existingLike = await this.Like.findOne({
           userId,
@@ -26,8 +25,6 @@ class LikeService {
             { _id: boardId },
             { $inc: { likesCnt: -1 } }
           ).session(session)
-
-          responseMessage = "좋아요 취소됨"
         } else {
           // 좋아요 추가
           await this.Like.create([{ userId, boardId }], { session })
@@ -35,12 +32,10 @@ class LikeService {
             { _id: boardId },
             { $inc: { likesCnt: 1 } }
           ).session(session)
-
-          responseMessage = "좋아요 등록됨"
         }
       })
 
-      return { success: true, message: responseMessage }
+      return this.Board.likesCnt
     } catch (err) {
       if (err.code === 11000) {
         console.warn(
@@ -62,7 +57,6 @@ class LikeService {
     const session = await mongoose.startSession()
 
     try {
-      let message
       await session.withTransaction(async () => {
         const existingLike = await this.Like.findOne({
           userId,
@@ -76,9 +70,6 @@ class LikeService {
             { _id: reviewId },
             { $inc: { likesCnt: -1 } }
           ).session(session)
-
-          message = "리뷰 좋아요 취소됨"
-          return { liked: false }
         } else {
           // 좋아요 추가
           await this.Like.create([{ userId, reviewId }], { session })
@@ -86,13 +77,10 @@ class LikeService {
             { _id: reviewId },
             { $inc: { likesCnt: 1 } }
           ).session(session)
-
-          message = "리뷰 좋아요 등록됨"
-          return { liked: true }
         }
       })
 
-      return { message: message }
+      return this.Review.likesCnt
     } catch (err) {
       if (err.code === 11000) {
         console.warn(
@@ -113,7 +101,6 @@ class LikeService {
     const session = await mongoose.startSession()
 
     try {
-      let message
       await session.withTransaction(async () => {
         const existingLike = await this.Like.findOne({
           userId,
@@ -127,9 +114,6 @@ class LikeService {
             { _id: commentId },
             { $inc: { likesCnt: -1 } }
           ).session(session)
-
-          message = "리뷰 좋아요 취소됨"
-          return { liked: false }
         } else {
           // 좋아요 추가
           await this.Like.create([{ userId, commentId }], { session })
@@ -137,13 +121,10 @@ class LikeService {
             { _id: reviewId },
             { $inc: { likesCnt: 1 } }
           ).session(session)
-
-          message = "리뷰 좋아요 등록됨"
-          return { liked: true }
         }
       })
 
-      return { message: message }
+      return this.Comment.likesCnt
     } catch (err) {
       if (err.code === 11000) {
         console.warn(

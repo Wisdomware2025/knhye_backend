@@ -97,7 +97,7 @@ export const likeOneReview = async (req, res) => {
       res.status(404).json({ message: "리뷰를 찾을 수 없음" })
     }
 
-    return res.status(200).json({ message: review.message })
+    return res.json(review)
   } catch (err) {
     console.log(err)
     return res.status(500).json({ message: "서버 오류" })
