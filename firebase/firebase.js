@@ -1,5 +1,9 @@
 import admin from "firebase-admin"
-import serviceAccount from "./firebase-adminsdk.json" assert { type: "json" }
+import dotenv from "dotenv"
+
+dotenv.config()
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS_JSON)
 
 // 초기화
 admin.initializeApp({

@@ -1,0 +1,12 @@
+node_modules
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.env
+*.DS_Store
+Thumbs.db
+coverage
+test
+docs
+firebase/firebase-adminsdk.json

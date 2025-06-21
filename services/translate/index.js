@@ -1,8 +1,70 @@
 import openai from "../../config/openai.js"
 
 class TranslateService {
-  constructor({ Translation }) {
+  constructor({ Translation, User }) {
     this.Translation = Translation
+    this.User = User
+  }
+
+  async processChatTranslation({ originTexts, userId, prompt }) {
+    const user = await this.User.findOne({ _id: userId })
+
+    let displayTexts = originTexts
+
+    if (!user) {
+      throw new Error("유저를 찾을 수 없음")
+    }
+
+    if (!user.chatTranslationMode) {
+      return
+    }
+
+    try {
+      const translateTexts = await translateText({
+        texts: [originTexts],
+        prompt: prompt,
+      })
+
+      if (translateTexts > 0) {
+        displayTexts = translateTexts[0]
+      }
+    } catch (err) {
+      console.log(err)
+      throw new Error("번역할 수 없음")
+    }
+  }
+
+  async processAppTranslation({ originTexts, userId, prompt }) {
+    const user = await this.User.findOne({ _id: userId })
+
+    let displayTexts = originTexts
+
+    if (!user) {
+      throw new Error("유저를 찾을 수 없음")
+    }
+
+    if (!user.mainLanguage) {
+      return
+    }
+
+    try {
+      const translateTexts = await this.translateText({
+        texts: originTexts,
+        prompt: prompt,
+      })
+
+      if (translateTexts.length === originTexts.length) {
+        textsToDisplay = translateTexts
+      } else {
+        console.warn(
+          "번역된 텍스트 수와 원본 텍스트 수가 일치하지 않습니다. 원본 텍스트를 사용합니다."
+        )
+        textsToDisplay = originTexts // 풀백으로 사용
+      }
+    } catch (err) {
+      console.log(err)
+      throw new Error("앱을 번역할 수 없음")
+    }
   }
   async translateText({ texts, prompt }) {
     try {

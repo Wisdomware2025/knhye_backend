@@ -22,7 +22,7 @@ import connectDB from "./config/db.js"
 connectDB() // MongoDB 연결
 
 const app = express()
-const port = process.env.PORT
+const port = process.env.PORT || 8080
 
 // 미들웨어
 app.set("port", port)
@@ -59,6 +59,6 @@ const io = new Server(server, {
 
 initChatSocket(io)
 
-server.listen(port, () => {
+server.listen(port, "0.0.0.0", () => {
   console.log(`Running at http://localhost:${port}`)
 })
