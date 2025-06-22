@@ -10,49 +10,56 @@ const userService = new AuthService({
   User,
 })
 
-export const getMessagesBetweenUsers = async (req, res) => {
+export const sendMessageToOther = async (req, res) => {
   try {
-    const { userId1, userId2 } = req.params
+    const { senderId } = req.user.userId
+    const { receiverId } = req.params
+    const { message } = req.body
 
-    const user1 = await userService.findUserById(userId1)
-    const user2 = await userService.findUserById(userId2)
-
-    if (!user1 || !user2) {
-      return res.status(404).json({ message: "유저를 찾을 수 없음" })
+    if (!senderId || !receiverId || !message) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: senderId, receiverId, or message.",
+      })
     }
 
-    const messages = await chatService.getHistory(userId1, userId2)
+    const newMessage = await chatService.saveMessage({
+      senderId,
+      receiverId,
+      message,
+    })
 
-    return res.json(messages)
+    if (newMessage.length() === 0) {
+      return res.status(500).json({ message: "메세지 전송 실패" })
+    }
+
+    return res.status(201).json(newMessage)
   } catch (err) {
     console.log(err.message)
     return res.status(500).json({ message: "서버 오류" })
   }
 }
 
-// import ChatService from "../../services/chat"
+export const getMessagesBetweenUsers = async (req, res) => {
+  try {
+    const { me } = req.user.userId
+    const { user } = req.params
 
-// const chatService = new ChatService({
-//   User,
-//   Message,
-// })
+    const user1 = await userService.findUserById(me)
+    const user2 = await userService.findUserById(user)
 
-// export const joinRoom = async (req, res) ={
-//   // 1대1 채팅방 생성
-// }
+    if (!user1 || !user2) {
+      return res.status(404).json({ message: "유저를 찾을 수 없음" })
+    }
 
-// export const sendMessage = async (req, res) =>{
-//   // 메세지 보내기
-// }
+    const messages = await chatService.getHistory(user1, user2)
 
-// export const translateMessage = async(req, res)=>{
-//   //번역 요청하기
-// }
-
-// export const exitRoomm = async(req, res)=>{
-//   //방 나가기
-// }
-
-// export const disconnect = async(req, res)=>{
-//   //연결 해제
-// }
+    if (messages.length() === 0) {
+      return res.status(404).json({ message: "메세지가 없습니다." })
+    }
+    return res.json(messages)
+  } catch (err) {
+    console.log(err.message)
+    return res.status(500).json({ message: "서버 오류" })
+  }
+}

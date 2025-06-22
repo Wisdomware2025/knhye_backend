@@ -7,13 +7,6 @@ function generateAuthCode() {
   return String(Math.floor(100000 + Math.random() * 900000)) // 6자리 랜덤 코드
 }
 
-function convertPhoneNum(phoneNum) {
-  if (phoneNum.toString().startsWith("+82")) {
-    return phoneNum.slice(3)
-  }
-  return phoneNum
-}
-
 class SendCodeService {
   constructor({ AuthCode }) {
     this.AuthCode = AuthCode
@@ -21,13 +14,12 @@ class SendCodeService {
 
   async sendAligo(phoneNum) {
     const authCode = generateAuthCode()
-    const convertedPhoneNum = await convertPhoneNum(phoneNum)
 
     const body = {
       key: process.env.ALIGO_API_KEY,
       user_id: process.env.ALIGO_USER_ID,
       sender: process.env.SENDER,
-      receiver: convertedPhoneNum,
+      receiver: phoneNum,
       msg: `[일손(ilson)] 인증 번호 [${authCode}]를 입력해주세요.`,
       msg_type: "SMS",
       testmode_yn: "Y",

@@ -16,9 +16,9 @@ const sendCodeService = new SendCodeService({
 })
 
 export const sendCode = async (req, res) => {
-  const { country, phoneNum } = req.body
+  const { phoneNum } = req.body
 
-  if (!phoneNum || !country) {
+  if (!phoneNum) {
     return res.status(400).json({ message: "입력 오류" })
   }
 
