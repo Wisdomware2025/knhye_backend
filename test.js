@@ -1,5 +1,6 @@
 import { generateTokens } from "./utils/jwt.js" // 파일 경로 변경
 import dotenv from "dotenv"
+import mongoose from "mongoose"
 dotenv.config()
 
 const id = new mongoose.Types.ObjectId("683cff894e29c4d01920a301")
