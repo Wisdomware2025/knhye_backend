@@ -21,7 +21,9 @@ const authMiddleware = (req, res, next) => {
     // 토큰 검증
     const decoded = verify(actualToken, process.env.ACCESS_TOKEN_SECRET)
 
-    console.log("Access Token verified successfully locally:", decoded)
+    if (!decoded) {
+      return res.status(401).json({ message: err })
+    }
 
     // 사용자 정보 요청 객체에 저장
     req.user = decoded
