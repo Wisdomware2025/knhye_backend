@@ -4,20 +4,25 @@ import Schedule from "../../models/schedule/Schedule.js"
 import { sendNotification } from "../../firebase/fcm.js"
 import mongoose from "mongoose"
 
-// export async function getAllSchedules(req, res) {
-//   try {
-//     const schedules = await getSchedules()
-//     res.json(schedules)
-//   } catch (err) {
-//     console.log(err)
-//     res.status(500).json({ message: "스케줄 불러오기 실패" })
-//   }
-// }
-
 const scheduleService = new ScheduleService({
   Schedule,
   sendNotification,
 })
+
+export async function getAllSchedules(req, res) {
+  try {
+    const schedules = await scheduleService.getSchedules()
+
+    if (!schedules) {
+      return res.json({ message: "일정이 없음" })
+    }
+
+    return res.json(schedules)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "스케줄 불러오기 실패" })
+  }
+}
 
 export async function getScheduleDday(req, res) {
   try {

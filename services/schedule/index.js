@@ -46,6 +46,15 @@ class ScheduleService {
     }
   }
 
+  async getSchedules() {
+    const schedules = await this.Schedule.find()
+    if (!schedules) {
+      return
+    }
+
+    return schedules
+  }
+
   async getScheduleByDate(dateInput) {
     let momentDate
 
@@ -81,14 +90,6 @@ class ScheduleService {
 
     return schedules
   }
-
-  // async getScheduleById(scheduleId) {
-  //   const schedule = await this.Schedule.findById(scheduleId)
-  //   if (!schedule) {
-  //     throw new Error("스케줄을 찾을 수 없습니다.")
-  //   }
-  //   return schedule
-  // }
 
   async getRecentSchedule() {
     const today = new Date()
