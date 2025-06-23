@@ -2,8 +2,10 @@ import { generateTokens } from "./utils/jwt.js" // 파일 경로 변경
 import dotenv from "dotenv"
 dotenv.config()
 
+const id = new mongoose.Types.ObjectId("683cff894e29c4d01920a301")
+
 const payload = {
-  userId: "683cff894e29c4d01920a301",
+  userId: id,
   username: "nahye",
   phoneNum: "01047013432",
 }
