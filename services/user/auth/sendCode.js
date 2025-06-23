@@ -22,7 +22,7 @@ class SendCodeService {
       receiver: phoneNum,
       msg: `[일손(ilson)] 인증 번호 [${authCode}]를 입력해주세요.`,
       msg_type: "SMS",
-      testmode_yn: "Y",
+      testmode_yn: "N",
     }
 
     try {
