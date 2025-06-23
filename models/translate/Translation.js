@@ -4,14 +4,7 @@ const TranslationSchema = new mongoose.Schema(
   {
     input: { type: String, required: true },
     output: { type: String },
-    type: { type: String, required: true }, // "country", "korean", "foreign"
-    targetLang: { type: String, required: true },
-
-    isTranslationEnabled: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
+    userId: { type: mongoose.Types.ObjectId, ref: "User", required: true },
   },
   {
     timestamps: true,

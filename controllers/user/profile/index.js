@@ -16,7 +16,7 @@ export async function getPopularUsers(req, res) {
 
     return res.status(200).json(popularUsers)
   } catch (err) {
-    console.log(err)
+    console.log(err.message)
     return res.status(500).json({ message: "서버 오류" })
   }
 }

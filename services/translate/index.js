@@ -6,7 +6,7 @@ class TranslateService {
     this.User = User
   }
 
-  async processChatTranslation({ originTexts, userId, prompt }) {
+  async processTranslation({ originTexts, userId, prompt, type }) {
     const user = await this.User.findOne({ _id: userId })
 
     let displayTexts = originTexts
@@ -15,58 +15,44 @@ class TranslateService {
       throw new Error("유저를 찾을 수 없음")
     }
 
-    if (!user.chatTranslationMode) {
+    // 타입에 따라 다른 조건 확인
+    if (type === "chat" && !user.chatTranslationMode) {
       return
     }
-
-    try {
-      const translateTexts = await translateText({
-        texts: [originTexts],
-        prompt: prompt,
-      })
-
-      if (translateTexts > 0) {
-        displayTexts = translateTexts[0]
-      }
-    } catch (err) {
-      console.log(err)
-      throw new Error("번역할 수 없음")
-    }
-  }
-
-  async processAppTranslation({ originTexts, userId, prompt }) {
-    const user = await this.User.findOne({ _id: userId })
-
-    let displayTexts = originTexts
-
-    if (!user) {
-      throw new Error("유저를 찾을 수 없음")
-    }
-
-    if (!user.mainLanguage) {
+    if (type === "app" && !user.mainLanguage) {
       return
     }
 
     try {
       const translateTexts = await this.translateText({
-        texts: originTexts,
+        texts: Array.isArray(originTexts) ? originTexts : [originTexts], // translateText가 배열을 받으므로 조정
         prompt: prompt,
+        user: user._id,
       })
 
-      if (translateTexts.length === originTexts.length) {
-        textsToDisplay = translateTexts
+      // 번역된 텍스트 수 일치 여부 확인
+      const expectedLength = Array.isArray(originTexts) ? originTexts.length : 1
+
+      if (translateTexts.length === expectedLength) {
+        displayTexts = Array.isArray(originTexts)
+          ? translateTexts
+          : translateTexts[0]
       } else {
         console.warn(
           "번역된 텍스트 수와 원본 텍스트 수가 일치하지 않습니다. 원본 텍스트를 사용합니다."
         )
-        textsToDisplay = originTexts // 풀백으로 사용
+        displayTexts = originTexts // 풀백으로 사용
       }
+
+      return displayTexts
     } catch (err) {
       console.log(err)
-      throw new Error("앱을 번역할 수 없음")
+      // 타입에 따라 다른 에러 메시지
+      throw new Error(`${type === "app" ? "앱을 " : ""}번역할 수 없음`)
     }
   }
-  async translateText({ texts, prompt }) {
+
+  async translateText({ texts, prompt, user }) {
     try {
       const messages = [
         {
@@ -102,6 +88,7 @@ class TranslateService {
       await this.Translation.create({
         input: texts,
         output: translatedTexts,
+        userId: user,
       })
 
       return translatedTexts
@@ -111,7 +98,26 @@ class TranslateService {
     }
   }
 
-  async cancelTranslate({ texts, prompt }) {}
+  async cancelTranslate({ translatedTexts, userId }) {
+    try {
+      const record = this.Translation.findOne({
+        output: translatedTexts,
+      })
+
+      if (record.userId !== userId) {
+        throw new Error("유저가 일치하지 않음")
+      }
+
+      if (!record) {
+        return { translatedTexts, message: "번역 기록이 없음" }
+      }
+
+      return record.input
+    } catch (err) {
+      console.log(err)
+      throw new Error("번역 취소할 수 없음")
+    }
+  }
 }
 
 export default TranslateService

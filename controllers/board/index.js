@@ -28,6 +28,7 @@ export const getAllFarmerBoards = async (req, res) => {
 
     return res.json(boards)
   } catch (err) {
+    console.log(err.message)
     return res.status(err.status || 500).json({ message: err })
   }
 }
@@ -38,6 +39,7 @@ export const getAllWorkerBoards = async (req, res) => {
 
     return res.json(boards)
   } catch (err) {
+    console.log(err.message)
     return res.status(err.status || 500).json({ message: err })
   }
 }

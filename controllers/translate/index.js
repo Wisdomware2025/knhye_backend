@@ -5,56 +5,59 @@ const translateService = new TranslateService({
   Translation,
 })
 
-export const translateStandard = async (req, res) => {
-  const { data, language } = req.body
+//채팅 번역
+export const handleTranslation = async (req, res) => {
+  const { originTexts, language } = req.body
 
-  if (!Array.isArray(data) || data.length === 0 || !language) {
-    return res.status(404).json({ message: "데이터를 입력해주세요." })
+  const { userId } = req.user.userId
+
+  if (!originTexts || !userId || !language) {
+    return res
+      .status(400)
+      .json({ message: "originTexts, userId, language는 필수입니다." })
   }
 
   try {
-    if (!Array.isArray(data)) {
-      // 단일 문자열이 들어올 경우 배열로 감싸주는 로직 추가
-      data = [data]
+    if (!Array.isArray(originTexts)) {
+      originTexts = [originTexts]
     }
-    const result = await translateService.translateText({
-      text: data,
+
+    const translatedText = await translateService.processTranslation({
+      originTexts,
+      userId,
       prompt: `Please translate the following into standard ${language}.`,
     })
 
-    return res.json({ result })
-  } catch (err) {
-    console.log(err)
-    return res.status(err.status || 500).json({ message: "서버 오류" })
+    // 성공 응답 전송
+    return res.status(200).json({
+      translatedText,
+    })
+  } catch (error) {
+    // 에러 응답 전송
+    console.error("채팅 번역 중 에러 발생:", error.message)
+    return res.status(500).json({
+      message: "채팅 텍스트 번역에 실패했습니다.",
+    })
   }
 }
 
-export const translatePages = async (req, res) => {
-  const { texts, prompt } = req.body
-
-  if (!texts || !Array.isArray(texts) || texts.length === 0) {
-    return res
-      .status(400)
-      .json({ message: "번역할 텍스트(texts) 배열이 필요합니다." })
-  }
-  if (!prompt || typeof prompt !== "string") {
-    return res
-      .status(400)
-      .json({ message: "번역 프롬프트(prompt)가 필요합니다." })
-  }
-
+export const cancelTranslate = async (req, res) => {
   try {
-    const translatedTexts = await translateService.translateText({
-      texts,
-      prompt,
+    const { translatedTexts } = req.body
+    const { userId } = req.user.userId
+
+    if (!translatedTexts) {
+      return res.status(400).json({ message: "번역할 텍스트 없음" })
+    }
+
+    const originTexts = await translateService.cancelTranslate({
+      translatedTexts,
+      userId,
     })
 
-    return res.status(200).json({ translatedTexts })
-  } catch (error) {
-    console.error("텍스트 번역 중 오류 발생:", error)
-    // 클라이언트에게는 일반적인 오류 메시지를 전달하고, 상세 에러는 서버 로그에 남깁니다.
-    return res
-      .status(500)
-      .json({ message: "텍스트 번역에 실패했습니다.", error: error.message })
+    return res.json({ originTexts })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "서버 오류" })
   }
 }
