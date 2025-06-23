@@ -19,7 +19,7 @@ const authMiddleware = (req, res, next) => {
     const actualToken = token.split(" ")[1]
 
     // 토큰 검증
-    const decoded = verify(actualToken, process.env.JWT_SECRET_KEY)
+    const decoded = verify(actualToken, process.env.ACCESS_TOKEN_SECRET)
 
     // 사용자 정보 요청 객체에 저장
     req.user = decoded
