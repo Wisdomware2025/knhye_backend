@@ -25,7 +25,7 @@ if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET) {
 export const generateTokens = (payload) => {
   // 액세스 토큰: 1시간 유효
   const accessToken = sign(payload, ACCESS_TOKEN_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1d",
   })
 
   // 리프레시 토큰: 30일 유효
