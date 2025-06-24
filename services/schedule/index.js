@@ -47,13 +47,9 @@ class ScheduleService {
   }
 
   async findAllSchedules() {
-    const schedules = await this.Schedule.find()
-    const formatSchedules = schedules.map((schedule) => ({
-      ...schedule.toObject(),
-      _id: schedule._id.toString(),
-    }))
+    const schedules = await this.Schedule.find().select("work date")
 
-    return formatSchedules
+    return schedules
   }
 
   async getScheduleByDate(dateInput) {
