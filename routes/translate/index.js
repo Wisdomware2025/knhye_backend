@@ -7,7 +7,7 @@ import authMiddleware from "../../middlewares/auth/index.js"
 
 const router = Router()
 
-router.post("/", authMiddleware, handleTranslation)
+router.post("/", handleTranslation)
 router.post("/cancel", authMiddleware, cancelTranslate)
 
 export default router
