@@ -1,42 +1,49 @@
 import { Router } from "express"
 import BoardController from "../../controllers/board/index.js"
+import BoardService from "../../services/board/index.js"
+import LikeService from "../../services/like/index.js"
 import authMiddleware from "../../middlewares/auth/index.js"
 import { validateFarmerBoard } from "../../middlewares/board/index.js"
 import { validateWorkerBoard } from "../../middlewares/board/index.js"
 
 const router = Router()
 
-router.get("/", BoardController.getAllBoards)
-router.get("/farmer", BoardController.getAllFarmerBoards)
-router.get("/worker", BoardController.getAllWorkerBoards)
-router.get("/:userId", BoardController.getBoardsByUserId)
-router.get("/:boardId", BoardController.getBoardById)
+const boardController = new BoardController({
+  BoardService,
+  LikeService,
+})
+
+router.get("/", boardController.getAllBoards)
+router.get("/farmer", boardController.getAllFarmerBoards)
+router.get("/worker", boardController.getAllWorkerBoards)
+router.get("/user/:userId", boardController.getBoardsByUserId)
+router.get("/:boardId", boardController.getBoardById)
 router.post(
   "/farmer",
   authMiddleware,
   validateFarmerBoard,
-  BoardController.createBoard
+  boardController.createBoard
 )
 router.post(
   "/worker",
   authMiddleware,
   validateWorkerBoard,
-  BoardController.createBoard
+  boardController.createBoard
 )
 router.put(
   "/farmer/:boardId",
   authMiddleware,
   validateFarmerBoard,
-  BoardController.updateBoard
+  boardController.updateBoard
 )
 router.put(
   "/worker/:boardId",
   authMiddleware,
   validateWorkerBoard,
-  BoardController.updateBoard
+  boardController.updateBoard
 )
-router.delete("/:boardId", authMiddleware, BoardController.deleteBoard)
-router.post("/:boardId", authMiddleware, BoardController.likeOneBoard)
-router.post("/:boardId", authMiddleware, BoardController.selectOneBoard)
+router.delete("/:boardId", authMiddleware, boardController.deleteBoard)
+router.post("/:boardId/like", authMiddleware, boardController.likeOneBoard)
+router.post("/:boardId/select", authMiddleware, boardController.selectOneBoard)
 
 export default router
