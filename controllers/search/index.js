@@ -1,5 +1,7 @@
 import SearchService from "../../services/search/index.js"
 
+const searchService = new SearchService()
+
 export const search = async (req, res) => {
   //get 함수에서 문자열을 기대함
   const { query } = req.query
@@ -9,11 +11,11 @@ export const search = async (req, res) => {
   }
 
   try {
-    const results = await SearchService.getSearchAll(query)
+    const results = await searchService.getSearchAll(query)
 
-    res.status(200).json(results)
+    return res.status(200).json(results)
   } catch (err) {
     console.log(err)
-    res.status(500).json({ message: "검색 오류" })
+    return res.status(500).json({ message: "검색 오류" })
   }
 }
