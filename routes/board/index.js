@@ -1,33 +1,42 @@
 import { Router } from "express"
-import {
-  getAllBoards,
-  getBoardsByUserId,
-  getBoardById,
-  createBoard,
-  updateBoard,
-  deleteBoard,
-  likeOneBoard,
-  selectOneBoard,
-  getAllFarmerBoards,
-  getAllWorkerBoards,
-} from "../../controllers/board/index.js"
+import BoardController from "../../controllers/board/index.js"
 import authMiddleware from "../../middlewares/auth/index.js"
 import { validateFarmerBoard } from "../../middlewares/board/index.js"
 import { validateWorkerBoard } from "../../middlewares/board/index.js"
 
 const router = Router()
 
-router.get("/", getAllBoards)
-router.get("/farmer", getAllFarmerBoards)
-router.get("/worker", getAllWorkerBoards)
-router.get("/:userId", getBoardsByUserId)
-router.get("/:boardId", getBoardById)
-router.post("/farmer", authMiddleware, validateFarmerBoard, createBoard)
-router.post("/worker", authMiddleware, validateWorkerBoard, createBoard)
-router.put("/farmer/:boardId", authMiddleware, validateFarmerBoard, updateBoard)
-router.put("/worker/:boardId", authMiddleware, validateWorkerBoard, updateBoard)
-router.delete("/:boardId", authMiddleware, deleteBoard)
-router.post("/:boardId", authMiddleware, likeOneBoard)
-router.post("/:boardId", authMiddleware, selectOneBoard)
+router.get("/", BoardController.getAllBoards)
+router.get("/farmer", BoardController.getAllFarmerBoards)
+router.get("/worker", BoardController.getAllWorkerBoards)
+router.get("/:userId", BoardController.getBoardsByUserId)
+router.get("/:boardId", BoardController.getBoardById)
+router.post(
+  "/farmer",
+  authMiddleware,
+  validateFarmerBoard,
+  BoardController.createBoard
+)
+router.post(
+  "/worker",
+  authMiddleware,
+  validateWorkerBoard,
+  BoardController.createBoard
+)
+router.put(
+  "/farmer/:boardId",
+  authMiddleware,
+  validateFarmerBoard,
+  BoardController.updateBoard
+)
+router.put(
+  "/worker/:boardId",
+  authMiddleware,
+  validateWorkerBoard,
+  BoardController.updateBoard
+)
+router.delete("/:boardId", authMiddleware, BoardController.deleteBoard)
+router.post("/:boardId", authMiddleware, BoardController.likeOneBoard)
+router.post("/:boardId", authMiddleware, BoardController.selectOneBoard)
 
 export default router

@@ -4,7 +4,7 @@ class CommentController {
     this.LikeService = LikeService
   }
 
-  async getAllCommentsByBoardId(req, res) {
+  getAllCommentsByBoardId = async (req, res) => {
     try {
       const inputBoardId = req.params.boardId
 
@@ -22,7 +22,7 @@ class CommentController {
     }
   }
 
-  async getAllCommentsByUserId(req, res) {
+  getAllCommentsByUserId = async (req, res) => {
     try {
       const userId = req.user.userId
 
@@ -38,7 +38,7 @@ class CommentController {
     }
   }
 
-  async createComment(req, res) {
+  createComment = async (req, res) => {
     try {
       const inputBoardId = req.params.boardId
       const data = {
@@ -60,7 +60,7 @@ class CommentController {
     }
   }
 
-  async updateComment(req, res) {
+  updateComment = async (req, res) => {
     try {
       const inputCommentId = req.params.id
       const data = {
@@ -82,7 +82,7 @@ class CommentController {
     }
   }
 
-  async deleteComment(req, res) {
+  deleteComment = async (req, res) => {
     try {
       const inputCommentId = req.params.id
       const user = req.user.userId
@@ -99,7 +99,7 @@ class CommentController {
     }
   }
 
-  async likeOneComment(req, res) {
+  likeOneComment = async (req, res) => {
     try {
       const commentId = req.params.id
       const userId = req.user.userId
@@ -114,7 +114,7 @@ class CommentController {
       })
 
       if (!comment) {
-        return res.stauts(404).json({ message: "댓글 찾을 수 없음" })
+        return res.status(404).json({ message: "댓글 찾을 수 없음" })
       }
 
       return res.json(comment)
