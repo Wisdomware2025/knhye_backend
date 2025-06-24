@@ -1,6 +1,11 @@
 import SearchService from "../../services/search/index.js"
+import Board from "../../models/board/Board.js"
+import User from "../../models/user/User.js"
 
-const searchService = new SearchService()
+const searchService = new SearchService({
+  Board,
+  User,
+})
 
 export const search = async (req, res) => {
   //get 함수에서 문자열을 기대함

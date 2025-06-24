@@ -1,7 +1,8 @@
-import Board from "../../models/board/Board.js"
-import User from "../../models/user/User.js"
-
 class SearchService {
+  constructor({ Board, User }) {
+    this.Board = Board
+    this.User = User
+  }
   async getSearchAll(query) {
     if (!query) {
       throw new Error("검색어가 필요합니다.")
@@ -12,7 +13,7 @@ class SearchService {
 
     const [titleResults, contentResults, authorResults, userResults] =
       await Promise.all([
-        Board.aggregate([
+        this.Board.aggregate([
           {
             $search: {
               index: board_idx,
@@ -23,7 +24,7 @@ class SearchService {
             },
           },
         ]),
-        Board.aggregate([
+        this.Board.aggregate([
           {
             $search: {
               index: board_idx,
@@ -34,7 +35,7 @@ class SearchService {
             },
           },
         ]),
-        Board.aggregate([
+        this.Board.aggregate([
           {
             $search: {
               index: board_idx,
@@ -45,7 +46,7 @@ class SearchService {
             },
           },
         ]),
-        User.aggregate([
+        this.User.aggregate([
           {
             $search: {
               index: user_idx,
