@@ -9,18 +9,13 @@ const scheduleService = new ScheduleService({
   sendNotification,
 })
 
-export async function getAllSchedules(req, res) {
+export const getAllSchedules = async (req, res) => {
   try {
-    const schedules = await scheduleService.getSchedules()
-
-    if (!schedules) {
-      return res.json({ message: "일정이 없음" })
-    }
+    const schedules = await scheduleService.findAllSchedules()
 
     return res.json(schedules)
   } catch (err) {
-    console.log(err)
-    return res.status(500).json({ message: "스케줄 불러오기 실패" })
+    return res.status(err.status || 500).json({ message: err })
   }
 }
 

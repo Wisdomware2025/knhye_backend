@@ -46,14 +46,14 @@ class ScheduleService {
     }
   }
 
-  async getSchedules() {
-    try {
-      const schedules = await this.Schedule.find()
+  async findAllSchedules() {
+    const schedules = await this.Schedule.find()
+    const formatSchedules = schedules.map((schedule) => ({
+      ...schedule.toObject(),
+      _id: schedule._id.toString(),
+    }))
 
-      return schedules
-    } catch (err) {
-      throw new Error(err.message)
-    }
+    return formatSchedules
   }
 
   async getScheduleByDate(dateInput) {
