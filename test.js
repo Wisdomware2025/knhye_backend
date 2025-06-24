@@ -3,12 +3,12 @@ import dotenv from "dotenv"
 import mongoose from "mongoose"
 dotenv.config()
 
-const id = new mongoose.Types.ObjectId("683cff894e29c4d01920a301")
+const id = new mongoose.Types.ObjectId("684b5e9db24c0d3071704a2e")
 
 const payload = {
   userId: id,
-  username: "nahye",
-  phoneNum: "01047013432",
+  username: "이현석",
+  phoneNum: "01096673894",
 }
 
 // 토큰 생성

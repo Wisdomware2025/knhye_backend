@@ -105,7 +105,10 @@ export async function deleteSchedule(req, res) {
   try {
     const scheduleId = new mongoose.Types.ObjectId(req.params)
     const userId = req.user.userId
-    await scheduleService.deleteOne({ scheduleId, userId })
+    const isDeleted = await scheduleService.deleteOne({
+      scheduleId,
+      userId,
+    })
     return res.json({ message: "일정이 삭제되었습니다." })
   } catch (err) {
     console.log(err)

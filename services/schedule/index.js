@@ -47,12 +47,13 @@ class ScheduleService {
   }
 
   async getSchedules() {
-    const schedules = await this.Schedule.find()
-    if (!schedules) {
-      return
-    }
+    try {
+      const schedules = await this.Schedule.find()
 
-    return schedules
+      return schedules
+    } catch (err) {
+      throw new Error(err.message)
+    }
   }
 
   async getScheduleByDate(dateInput) {
@@ -170,7 +171,7 @@ class ScheduleService {
 
       if (!schedule) throw { status: 404, message: "일정을 찾을 수 없습니다." }
 
-      if (schedule.author.toString() !== userId)
+      if (schedule.author.toString() !== userId.toString())
         throw { status: 403, message: "권한이 없습니다." }
 
       // 스케줄 삭제 전 관련 알림 작업 취소
