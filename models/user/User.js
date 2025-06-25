@@ -2,20 +2,11 @@ import { Schema, model } from "mongoose"
 
 const UserSchema = new Schema(
   {
-    country: {
-      type: String,
-      // maxlength: 255,
-      required: true,
-    },
     phoneNum: {
       type: String,
       // maxlength: 20,
       required: true,
       unique: true,
-    },
-    inputCode: {
-      type: String,
-      required: true,
     },
     username: {
       type: String,
@@ -48,7 +39,6 @@ const UserSchema = new Schema(
       {
         token: {
           type: String,
-          required: true,
         },
         createdAt: {
           type: Date,
