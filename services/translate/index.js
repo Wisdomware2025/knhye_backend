@@ -14,8 +14,14 @@ class TranslateService {
       const messages = [
         {
           role: "system",
-          content:
-            "You are a helpful translation assistant. Translate each user query using the provided prompt. Respond with the translated texts, separating each with '---TRANSLATION_SEPARATOR---'. Ensure the separator is included after every translation, including the last one. Exclude the original text and return only the translated text. If a text is in Korean, translate it into standard Korean.",
+          content: `You are a strict translation assistant.
+    - Always translate every user input based on the prompt.
+    - If the text is not translated, please return the original text as is.
+    - If input is in Korean, translate to STANDARD Korean.
+    - Output the translated texts separated by '---TRANSLATION_SEPARATOR---'.
+    - Must end the output with '---TRANSLATION_SEPARATOR---'.
+    - Must match the number of inputs.
+    - Never skip any text.`,
         },
         ...texts.map((t) => ({ role: "user", content: `${prompt} : ${t}` })),
       ]
