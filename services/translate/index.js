@@ -16,12 +16,12 @@ class TranslateService {
           role: "system",
           content: `You are a strict translation assistant.
     - Always translate every user input based on the prompt.
-    - If the text is not translated, please return the original text as is.
-    - If input is in Korean, translate to STANDARD Korean.
+    - If it is a Gyeongsangbuk-do dialect of South Korea, translate it into standard Korean.
+    - Never skip any text.
     - Output the translated texts separated by '---TRANSLATION_SEPARATOR---'.
     - Must end the output with '---TRANSLATION_SEPARATOR---'.
     - Must match the number of inputs.
-    - Never skip any text.`,
+    `,
         },
         ...texts.map((t) => ({ role: "user", content: `${prompt} : ${t}` })),
       ]
