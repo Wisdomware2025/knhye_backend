@@ -43,7 +43,7 @@ class AuthService {
         throw new Error("이미 가입된 전화번호입니다.")
       }
 
-      const newUser = await new User({
+      const newUser = await new this.User({
         phoneNum,
         username,
         profileImg,

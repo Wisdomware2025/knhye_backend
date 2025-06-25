@@ -182,9 +182,7 @@ class ScheduleService {
   async scheduleNotificationJob(scheduleId) {
     try {
       // 'author'를 populate하여 사용자 세부 정보를 가져옵니다.
-      const scheduleEntry = await this.Schedule.findById(scheduleId).populate(
-        "author"
-      )
+      const scheduleEntry = await this.Schedule.findById(scheduleId)
 
       if (!scheduleEntry || !scheduleEntry.author) {
         throw new Error("스케줄이나 작성자가 없습니다.")
@@ -203,10 +201,6 @@ class ScheduleService {
 
       const dateMoment = moment.tz(scheduleEntry.date, "Asia/Seoul") // 시간 정보를 포함한 moment 객체
       const work = scheduleEntry.work
-
-      if (!fcmToken || fcmToken.trim() === "") {
-        throw new Error("FCM 토큰이 존재하지 않음")
-      }
 
       // 현재 날짜를 00:00:00으로 설정하여 과거 알림을 방지
       const now = moment().startOf("day").toDate()
@@ -243,7 +237,7 @@ class ScheduleService {
 
               while (attempts < MAX_RETRY_ATTEMPTS + 1) {
                 try {
-                  await this.sendNotification(fcmToken, title, body)
+                  await this.sendNotification(userFcmTokens, title, body)
 
                   scheduleEntry.notificationSent = true
                   break // 성공 시 루프 종료

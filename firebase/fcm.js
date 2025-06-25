@@ -1,10 +1,10 @@
 import admin from "./firebase.js"
 
-export async function sendNotification(fcmToken, body) {
+export async function sendNotification(fcmToken, title, body) {
   //보낼 메세지
   const message = {
     notification: {
-      title: "[일손(ilson)] 일정 알림!",
+      title: title,
       body: body, // 알림 본문
     },
     token: fcmToken,

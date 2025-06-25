@@ -79,7 +79,6 @@ export const signup = async (req, res) => {
 
     return res.status(201).json({ message: "회원가입 완료", user: newUser })
   } catch (err) {
-    console.error(err.message)
     return res.status(409).json({ message: err.message })
   }
 }

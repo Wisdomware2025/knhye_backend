@@ -1,5 +1,7 @@
 import mongoose from "mongoose"
 
+const MAX_RETRY_ATTEMPTS = 2
+
 class LikeService {
   constructor({ Like, Board, Review, Comment }) {
     this.Like = Like
@@ -7,6 +9,35 @@ class LikeService {
     this.Review = Review
     this.Comment = Comment
   }
+
+  // async likeNotification({likeId, type}){
+  //   try{
+  //     //like : userId, boardId
+  //     //board : author(userId)
+
+  //     //board의 author은 receiver
+  //     //like를 찾아서 userId를 populate
+  //     //author에게 "userId님이 회원님의 --에 좋아요를 눌렀습니다."전송
+
+  //     const likeEntry = await this.Like.findById(likeId).populate("userId")
+
+  //     if(!likeEntry){
+  //       throw new Error("좋아요가 눌러져있지 않습니다.")
+  //     }
+
+  //     const userFcmTokens = likeEntry.userId.fcmToken
+  //     if(!userFcmTokens) {
+
+  //       console.warn(
+  //         `사용자의 FCM 토큰이 존재하지 않습니다.`
+  //       )
+  //       return
+  //     }
+
+  //     const title = "[일손(ilson)] 알림"
+  //     const body = `${likeEntry.userId}님이 회원님의 ${type}에 좋아요를 눌렀습니다.`
+  //   }
+  // }
 
   async toggleLikeBoard({ userId, boardId }) {
     const session = await mongoose.startSession()
