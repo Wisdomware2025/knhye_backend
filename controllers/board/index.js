@@ -2,7 +2,7 @@ import BoardService from "../../services/board/index.js"
 import Board from "../../models/board/Board.js"
 import LikeService from "../../services/like/index.js"
 import Like from "../../models/like/Like.js"
-
+import { sendNotification } from "../../firebase/fcm.js"
 const boardService = new BoardService({
   Board,
 })
@@ -10,6 +10,7 @@ const boardService = new BoardService({
 const likeService = new LikeService({
   Like,
   Board,
+  sendNotification,
 })
 
 export const getAllBoards = async (req, res) => {

@@ -2,7 +2,7 @@ import CommentService from "../../services/board/comment.js"
 import Comment from "../../models/board/Comment.js"
 import Like from "../../models/like/Like.js"
 import LikeService from "../../services/like/index.js"
-
+import { sendNotification } from "../../firebase/fcm.js"
 const commentService = new CommentService({
   Comment,
 })
@@ -10,6 +10,7 @@ const commentService = new CommentService({
 const likeService = new LikeService({
   Comment,
   Like,
+  sendNotification,
 })
 
 export const getAllCommentsByBoardId = async (req, res) => {

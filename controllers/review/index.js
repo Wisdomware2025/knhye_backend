@@ -2,7 +2,7 @@ import Review from "../../models/review/Review.js"
 import LikeService from "../../services/like/index.js"
 import ReviewService from "../../services/review/index.js"
 import Like from "../../models/like/Like.js"
-
+import { sendNotification } from "../../firebase/fcm.js"
 const reviewService = new ReviewService({
   Review,
 })
@@ -10,6 +10,7 @@ const reviewService = new ReviewService({
 const likeService = new LikeService({
   Like,
   Review,
+  sendNotification,
 })
 
 export const getReviewsByReceiverId = async (req, res) => {
