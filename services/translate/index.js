@@ -5,7 +5,7 @@ class TranslateService {
     this.Translation = Translation
   }
 
-  async processTranslation({ originTexts, prompt, type }) {
+  async processTranslation({ originTexts, prompt }) {
     let displayTexts = originTexts
 
     try {
@@ -32,7 +32,7 @@ class TranslateService {
     } catch (err) {
       console.log(err)
       // 타입에 따라 다른 에러 메시지
-      throw new Error(`${type === "app" ? "앱을 " : ""}번역할 수 없음`)
+      throw new Error("번역할 수 없음")
     }
   }
 

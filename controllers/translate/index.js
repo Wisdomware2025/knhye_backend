@@ -29,8 +29,6 @@ export const handleTranslation = async (req, res) => {
       translatedText,
     })
   } catch (error) {
-    // 에러 응답 전송
-    console.error("채팅 번역 중 에러 발생:", error.message)
     return res.status(500).json({
       message: "채팅 텍스트 번역에 실패했습니다.",
     })

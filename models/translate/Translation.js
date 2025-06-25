@@ -4,7 +4,6 @@ const TranslationSchema = new mongoose.Schema(
   {
     input: { type: String, required: true },
     output: { type: String },
-    userId: { type: mongoose.Types.ObjectId, ref: "User", required: true },
   },
   {
     timestamps: true,
