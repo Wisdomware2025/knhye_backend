@@ -30,9 +30,8 @@ class TranslateService {
 
       return displayTexts
     } catch (err) {
-      console.log(err)
       // 타입에 따라 다른 에러 메시지
-      throw new Error("번역할 수 없음")
+      throw new Error("번역할 수 없음", err)
     }
   }
 
@@ -85,7 +84,7 @@ class TranslateService {
 
       return translatedTexts
     } catch (err) {
-      throw new Error("번역 실패")
+      throw new Error("번역 실패", err)
     }
   }
 
