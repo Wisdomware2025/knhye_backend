@@ -7,18 +7,20 @@ class TranslateService {
 
   async translateText({ texts, prompt }) {
     try {
-      if (!Array.isArray(texts) || texts.length === 0) {
-        throw new Error("texts가 비었거나 유효하지 않습니다.")
-      }
+      // if (!Array.isArray(texts) || texts.length === 0) {
+      //   throw new Error("texts가 비었거나 유효하지 않습니다.")
+      // }
 
       const messages = [
         {
           role: "system",
           content:
-            "You are a helpful translation assistant. Translate each user query using the provided prompt. Respond with the translated texts, separating each with '---TRANSLATION_SEPARATOR---'. Ensure the separator is included after every translation, including the last one.",
+            "You are a helpful translation assistant. Translate each user query using the provided prompt. Respond with the translated texts, separating each with '---TRANSLATION_SEPARATOR---'. Ensure the separator is included after every translation, including the last one. Exclude the original text and return only the translated text. If a text is in Korean, translate it into standard Korean.",
         },
         ...texts.map((t) => ({ role: "user", content: `${prompt} : ${t}` })),
       ]
+
+      console.log(messages)
 
       const completion = await openai.chat.completions.create({
         model: "gpt-4-turbo",
@@ -29,6 +31,7 @@ class TranslateService {
       const res = completion?.choices?.[0]?.message?.content
 
       if (!res) {
+        console.log("응답 메세지 비어있음")
         throw new Error("OpenAI 응답에서 메시지가 비어 있습니다.")
       }
 
@@ -38,6 +41,8 @@ class TranslateService {
         .split("---TRANSLATION_SEPARATOR---")
         .map((s) => s.trim())
         .filter(Boolean)
+
+      console.log(translatedTexts)
 
       if (translatedTexts.length !== texts.length) {
         throw new Error("번역된 텍스트 수가 다름", translatedTexts)

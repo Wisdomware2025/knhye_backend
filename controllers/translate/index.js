@@ -6,6 +6,7 @@ const translateService = new TranslateService({
 })
 
 export const handleTranslation = async (req, res) => {
+  console.timeLog()
   const { originTexts, language } = req.body
 
   if (!originTexts || !language) {
@@ -17,7 +18,7 @@ export const handleTranslation = async (req, res) => {
   try {
     const translatedText = await translateService.processTranslation({
       originTexts,
-      prompt: `Please translate the following into standard ${language}.`,
+      prompt: `Please translate the following into ${language}.`,
     })
 
     if (!translatedText) {
