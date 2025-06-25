@@ -1,33 +1,17 @@
 import openai from "../../config/openai.js"
 
 class TranslateService {
-  constructor({ Translation, User }) {
+  constructor({ Translation }) {
     this.Translation = Translation
-    this.User = User
   }
 
-  async processTranslation({ originTexts, userId, prompt, type }) {
-    const user = await this.User.findOne({ _id: userId })
-
+  async processTranslation({ originTexts, prompt, type }) {
     let displayTexts = originTexts
-
-    if (!user) {
-      throw new Error("유저를 찾을 수 없음")
-    }
-
-    // 타입에 따라 다른 조건 확인
-    if (type === "chat" && !user.chatTranslationMode) {
-      return
-    }
-    if (type === "app" && !user.mainLanguage) {
-      return
-    }
 
     try {
       const translateTexts = await this.translateText({
         texts: Array.isArray(originTexts) ? originTexts : [originTexts], // translateText가 배열을 받으므로 조정
         prompt: prompt,
-        user: user._id,
       })
 
       // 번역된 텍스트 수 일치 여부 확인
@@ -52,7 +36,7 @@ class TranslateService {
     }
   }
 
-  async translateText({ texts, prompt, user }) {
+  async translateText({ texts, prompt }) {
     try {
       const messages = [
         {
@@ -88,25 +72,19 @@ class TranslateService {
       await this.Translation.create({
         input: texts,
         output: translatedTexts,
-        userId: user,
       })
 
       return translatedTexts
     } catch (err) {
-      console.log(err)
       throw new Error("번역 실패")
     }
   }
 
-  async cancelTranslate({ translatedTexts, userId }) {
+  async cancelTranslate({ translatedTexts }) {
     try {
       const record = this.Translation.findOne({
         output: translatedTexts,
       })
-
-      if (record.userId !== userId) {
-        throw new Error("유저가 일치하지 않음")
-      }
 
       if (!record) {
         return { translatedTexts, message: "번역 기록이 없음" }
@@ -114,7 +92,6 @@ class TranslateService {
 
       return record.input
     } catch (err) {
-      console.log(err)
       throw new Error("번역 취소할 수 없음")
     }
   }

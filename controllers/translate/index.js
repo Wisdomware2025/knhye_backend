@@ -5,16 +5,13 @@ const translateService = new TranslateService({
   Translation,
 })
 
-//채팅 번역
 export const handleTranslation = async (req, res) => {
   const { originTexts, language } = req.body
 
-  const { userId } = req.user.userId
-
-  if (!originTexts || !userId || !language) {
+  if (!originTexts || !language) {
     return res
       .status(400)
-      .json({ message: "originTexts, userId, language는 필수입니다." })
+      .json({ message: "originTexts, language는 필수입니다." })
   }
 
   try {
@@ -24,7 +21,6 @@ export const handleTranslation = async (req, res) => {
 
     const translatedText = await translateService.processTranslation({
       originTexts,
-      userId,
       prompt: `Please translate the following into standard ${language}.`,
     })
 
@@ -44,7 +40,6 @@ export const handleTranslation = async (req, res) => {
 export const cancelTranslate = async (req, res) => {
   try {
     const { translatedTexts } = req.body
-    const { userId } = req.user.userId
 
     if (!translatedTexts) {
       return res.status(400).json({ message: "번역할 텍스트 없음" })
@@ -52,12 +47,10 @@ export const cancelTranslate = async (req, res) => {
 
     const originTexts = await translateService.cancelTranslate({
       translatedTexts,
-      userId,
     })
 
     return res.json({ originTexts })
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ message: "서버 오류" })
   }
 }

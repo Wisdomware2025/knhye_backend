@@ -25,16 +25,6 @@ const UserSchema = new Schema(
         ref: "User",
       },
     ],
-    mainLanguage: {
-      type: String,
-      required: true,
-      default: "Korean",
-    },
-    chatTranlationMode: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
     fcmTokens: [
       {
         token: {
