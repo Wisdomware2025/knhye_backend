@@ -15,14 +15,14 @@ export const handleTranslation = async (req, res) => {
   }
 
   try {
-    if (!Array.isArray(originTexts)) {
-      originTexts = [originTexts]
-    }
-
     const translatedText = await translateService.processTranslation({
       originTexts,
       prompt: `Please translate the following into standard ${language}.`,
     })
+
+    if (!translatedText) {
+      return res.status(404).json({ message: err })
+    }
 
     // 성공 응답 전송
     return res.status(200).json({

@@ -5,36 +5,6 @@ class TranslateService {
     this.Translation = Translation
   }
 
-  async processTranslation({ originTexts, prompt }) {
-    let displayTexts = originTexts
-
-    try {
-      const translateTexts = await this.translateText({
-        texts: Array.isArray(originTexts) ? originTexts : [originTexts], // translateText가 배열을 받으므로 조정
-        prompt: prompt,
-      })
-
-      // 번역된 텍스트 수 일치 여부 확인
-      const expectedLength = Array.isArray(originTexts) ? originTexts.length : 1
-
-      if (translateTexts.length === expectedLength) {
-        displayTexts = Array.isArray(originTexts)
-          ? translateTexts
-          : translateTexts[0]
-      } else {
-        console.warn(
-          "번역된 텍스트 수와 원본 텍스트 수가 일치하지 않습니다. 원본 텍스트를 사용합니다."
-        )
-        displayTexts = originTexts // 풀백으로 사용
-      }
-
-      return displayTexts
-    } catch (err) {
-      // 타입에 따라 다른 에러 메시지
-      throw new Error("번역할 수 없음", err)
-    }
-  }
-
   async translateText({ texts, prompt }) {
     try {
       if (!Array.isArray(texts) || texts.length === 0) {
@@ -50,15 +20,11 @@ class TranslateService {
         ...texts.map((t) => ({ role: "user", content: `${prompt} : ${t}` })),
       ]
 
-      // 각 텍스트에 대한 사용자 메시지 추가
-      // texts.forEach((textItem) => {
-      //   messages.push({ role: "user", content: `${prompt} : ${textItem}` })
-      // })
-
       const completion = await openai.chat.completions.create({
         model: "gpt-4-turbo",
         messages: messages,
       })
+
       //OpenAI API가 반환한 응답에서 번역된 결과 텍스트(content)를 꺼내서 함수의 반환값으로 돌려줌
       const res = completion?.choices?.[0]?.message?.content
 
@@ -85,6 +51,37 @@ class TranslateService {
       return translatedTexts
     } catch (err) {
       throw new Error("번역 실패", err)
+    }
+  }
+
+  async processTranslation({ originTexts, prompt }) {
+    let displayTexts = originTexts
+
+    try {
+      const translateTexts = await this.translateText({
+        texts: Array.isArray(originTexts) ? originTexts : [originTexts], // translateText가 배열을 받으므로 조정
+        prompt: prompt,
+      })
+
+      // 번역된 텍스트 수 일치 여부 확인
+      const expectedLength = Array.isArray(originTexts) ? originTexts.length : 1
+
+      if (translateTexts.length === expectedLength) {
+        displayTexts = Array.isArray(originTexts)
+          ? translateTexts
+          : translateTexts[0]
+      } else {
+        console.warn(
+          "번역된 텍스트 수와 원본 텍스트 수가 일치하지 않습니다. 원본 텍스트를 사용합니다."
+        )
+        displayTexts = originTexts // 풀백으로 사용
+      }
+
+      return displayTexts
+    } catch (err) {
+      console.log(err)
+      // 타입에 따라 다른 에러 메시지
+      throw new Error("번역할 수 없음", err)
     }
   }
 
