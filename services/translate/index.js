@@ -38,8 +38,7 @@ class TranslateService {
       const res = completion?.choices?.[0]?.message?.content
 
       if (!res) {
-        console.log("응답 메세지 비어있음")
-        throw new Error("OpenAI 응답에서 메시지가 비어 있습니다.")
+        return texts
       }
 
       //번역된 텍스트 분리
