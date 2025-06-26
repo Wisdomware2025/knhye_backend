@@ -22,6 +22,8 @@ class TranslateService {
           - Separate translated texts with '---TRANSLATION_SEPARATOR---'.
           - The output must end with '---TRANSLATION_SEPARATOR---'.
           - The number of output texts must match the number of input texts.
+          - Return only the translated texts, with no explanations, comments, or added text.
+          - Keep all keys as is.
           `,
         },
         ...texts.map((t) => ({ role: "user", content: `${prompt} : ${t}` })),
