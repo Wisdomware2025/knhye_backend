@@ -142,7 +142,8 @@ export const refreshUserToken = async (req, res) => {
 
 // FCM 토큰 업데이트
 export const updateFcmToken = async (req, res) => {
-  const { userId, fcmToken } = req.body
+  const { fcmToken } = req.body
+  const { userId } = req.user.userId
 
   if (!userId || !fcmToken) {
     return res

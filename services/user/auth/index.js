@@ -50,7 +50,19 @@ class AuthService {
         intro,
       }).save()
 
-      return newUser
+      if (!newUser) {
+        throw new Error("회원가입에 실패함")
+      }
+
+      const payload = {
+        userId: newUser._id,
+        username: newUser.username,
+        phoneNum: newUser.phoneNum,
+      }
+
+      const { accessToken, refreshToken } = generateTokens(payload)
+
+      return { message: "회원가입 성공", accessToken, refreshToken }
     } catch (err) {
       throw new Error("회원가입 중 오류 발생")
     }
@@ -87,16 +99,6 @@ class AuthService {
       throw new Error(err.message || "토큰 갱신 중 오류 발생")
     }
   }
-
-  // async findUserById(userId) {
-  //   const user = this.User.findById(userId)
-
-  //   if (!user) {
-  //     throw new Error({ status: 404, message: "일치하는 유저가 없음" })
-  //   }
-
-  //   return true
-  // }
 
   async updateFcmToken({ userId, fcmToken }) {
     const user = await this.User.findById(userId)
