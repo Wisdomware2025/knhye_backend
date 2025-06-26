@@ -67,13 +67,23 @@ export async function createSchedule(req, res) {
     }
     const author = req.user.userId
 
+    if (!date || !data) {
+      return res
+        .status(400)
+        .json({ message: "입력 오류. 날짜와 데이터를 정확히 입력해주세요." })
+    }
+
+    if (!author) {
+      return res.status(403).json({ message: "로그인해주세요" })
+    }
+
     //파라미터를 중괄호로 묶지 않을 경우 순서를 기억해야함
     //객체 디스트럭처링 파라미터로 보낼 것
     const schedule = await scheduleService.createOne({ date, data, author })
     return res.status(201).json(schedule)
   } catch (err) {
     console.log(err)
-    return res.status(400).json({ message: "스케줄 생성 실패" })
+    return res.status(500).json({ message: "스케줄 생성 실패" })
   }
 }
 

@@ -120,6 +120,10 @@ class ScheduleService {
       })
       const savedSchedule = await schedule.save()
 
+      if (!savedSchedule) {
+        throw new Error("스케줄 생성 실패함")
+      }
+
       // 스케줄 생성 후 알림 스케줄링
       await this.scheduleNotificationJob(savedSchedule._id)
 
