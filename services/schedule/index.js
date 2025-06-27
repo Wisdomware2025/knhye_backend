@@ -28,7 +28,7 @@ class ScheduleService {
 
       for (const entry of allSchedules) {
         const scheduleDateMoment = moment
-          .tz(entry.date, "Asia/Seoul")
+          .tz(entry.startDate, "Asia/Seoul")
           .startOf("day")
         const now = moment().startOf("day")
 
@@ -46,147 +46,10 @@ class ScheduleService {
     }
   }
 
-  async findAllSchedules() {
-    const schedules = await this.Schedule.find().select("work date")
-
-    return schedules
-  }
-
-  async getScheduleByDate(dateInput) {
-    let momentDate
-
-    if (dateInput instanceof Date) {
-      // 이미 Date 객체라면 직접 사용
-      momentDate = moment.tz(dateInput, "Asia/Seoul")
-    } else if (typeof dateInput === "string") {
-      // 문자열이라면, moment가 인식하는 표준 형식인지 확인
-      // 만약 클라이언트에서 'YYYY-MM-DD' 형식으로 보낸다면
-      momentDate = moment.tz(dateInput, "YYYY-MM-DD", "Asia/Seoul")
-    } else {
-      // Date 객체도 문자열도 아니라면, 유효하지 않은 입력으로 간주
-      throw new Error("유효하지 않은 날짜 입력 형식입니다.")
-    }
-
-    // Moment 객체가 유효한지 확인
-    if (!momentDate.isValid()) {
-      throw new Error(
-        `유효하지 않은 날짜 값입니다: ${dateInput}. 올바른 날짜 형식을 제공해주세요.`
-      )
-    }
-
-    const start = moment.tz(dateInput, "Asia/Seoul").startOf("day").toDate()
-    const end = moment.tz(dateInput, "Asia/Seoul").endOf("day").toDate()
-
-    const schedules = await this.Schedule.find({
-      date: { $gte: start, $lt: end },
-    })
-
-    if (!schedules || schedules.length === 0) {
-      return []
-    }
-
-    return schedules
-  }
-
-  async getRecentSchedule() {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const schedules = await this.Schedule.find({
-      date: { $gte: today },
-    })
-      .sort({ date: 1 })
-      .limit(3)
-      .lean()
-
-    if (!schedules) {
-      throw new Error("스케줄을 찾을 수 없습니다.")
-    }
-
-    return schedules.map((schedule) => ({
-      date: schedule.date,
-      workers: schedule.workers,
-      work: schedule.work,
-      location: schedule.location,
-    }))
-  }
-
-  async createOne({ date, data, author }) {
-    try {
-      const schedule = new this.Schedule({
-        ...data,
-        date,
-        author,
-      })
-      const savedSchedule = await schedule.save()
-
-      if (!savedSchedule) {
-        throw new Error("스케줄 생성 실패함")
-      }
-
-      // 스케줄 생성 후 알림 스케줄링
-      await this.scheduleNotificationJob(savedSchedule._id)
-
-      return savedSchedule
-    } catch (err) {
-      throw err
-    }
-  }
-
-  async updateOne({ scheduleId, date, data, userId }) {
-    try {
-      const schedule = await this.Schedule.findById(scheduleId)
-      if (!schedule) throw { status: 404, message: "일정을 찾을 수 없습니다." }
-
-      if (schedule.author.toString() !== userId)
-        throw { status: 403, message: "권한이 없습니다." }
-
-      // 기존 알림 작업 취소
-      await this.cancelExistingNotificationJobs(scheduleId)
-
-      schedule.set({
-        date,
-        ...data, // data 객체 전체를 업데이트
-      })
-      const updatedSchedule = await schedule.save()
-
-      // 업데이트된 스케줄로 알림 재스케줄링
-      await this.scheduleNotificationJob(updatedSchedule._id)
-      console.log(
-        `[ScheduleService] 스케줄 ID: ${scheduleId} 업데이트 및 알림 재스케줄링 완료.`
-      )
-      return updatedSchedule
-    } catch (err) {
-      console.error(
-        `[ScheduleService] 스케줄 업데이트 중 오류 발생: ${err.message}`,
-        err
-      )
-      throw err
-    }
-  }
-
-  async deleteOne({ scheduleId, userId }) {
-    try {
-      const schedule = await this.Schedule.findById(scheduleId)
-
-      if (!schedule) throw { status: 404, message: "일정을 찾을 수 없습니다." }
-
-      if (schedule.author.toString() !== userId.toString())
-        throw { status: 403, message: "권한이 없습니다." }
-
-      // 스케줄 삭제 전 관련 알림 작업 취소
-      await this.cancelExistingNotificationJobs(schedule._id)
-
-      await schedule.deleteOne()
-    } catch (err) {
-      throw err
-    }
-  }
-
-  async scheduleNotificationJob(scheduleId) {
+  async scheduleNotificationJob({ id }) {
     try {
       // 'author'를 populate하여 사용자 세부 정보를 가져옵니다.
-      const scheduleEntry = await this.Schedule.findById(scheduleId)
+      const scheduleEntry = await this.Schedule.findById(id)
 
       if (!scheduleEntry || !scheduleEntry.author) {
         throw new Error("스케줄이나 작성자가 없습니다.")
@@ -203,7 +66,7 @@ class ScheduleService {
         return // 함수 종료
       }
 
-      const dateMoment = moment.tz(scheduleEntry.date, "Asia/Seoul") // 시간 정보를 포함한 moment 객체
+      const dateMoment = moment.tz(scheduleEntry.startDate, "Asia/Seoul") // 시간 정보를 포함한 moment 객체
       const work = scheduleEntry.work
 
       // 현재 날짜를 00:00:00으로 설정하여 과거 알림을 방지
@@ -259,12 +122,13 @@ class ScheduleService {
           )
         }
       })
+      return true
     } catch (err) {
       throw err
     }
   }
 
-  async cancelExistingNotificationJobs(scheduleId) {
+  async cancelExistingNotificationJobs({ scheduleId }) {
     NOTIFICATION_DATES.forEach(({ day }) => {
       const jobName = `${scheduleId}_${day}`
       if (this.scheduledJobs[jobName]) {
@@ -272,6 +136,144 @@ class ScheduleService {
         delete this.scheduledJobs[jobName] // 객체에서 삭제하여 메모리 정리
       }
     })
+  }
+
+  async findAllSchedules() {
+    const schedules = await this.Schedule.find().select("work date")
+
+    return schedules
+  }
+
+  async getScheduleByDate({ dateInput }) {
+    let momentDate
+
+    if (dateInput instanceof Date) {
+      // 이미 Date 객체라면 직접 사용
+      momentDate = moment.tz(dateInput, "Asia/Seoul")
+    } else if (typeof dateInput === "string") {
+      // 문자열이라면, moment가 인식하는 표준 형식인지 확인
+      // 만약 클라이언트에서 'YYYY-MM-DD' 형식으로 보낸다면
+      momentDate = moment.tz(dateInput, "YYYY-MM-DD", "Asia/Seoul")
+    } else {
+      // Date 객체도 문자열도 아니라면, 유효하지 않은 입력으로 간주
+      throw new Error("유효하지 않은 날짜 입력 형식입니다.")
+    }
+
+    // Moment 객체가 유효한지 확인
+    if (!momentDate.isValid()) {
+      throw new Error(
+        `유효하지 않은 날짜 값입니다: ${dateInput}. 올바른 날짜 형식을 제공해주세요.`
+      )
+    }
+
+    const start = moment.tz(dateInput, "Asia/Seoul").startOf("day").toDate()
+    const end = moment.tz(dateInput, "Asia/Seoul").endOf("day").toDate()
+
+    const schedules = await this.Schedule.find({
+      startDate: { $gte: start, $lt: end },
+    })
+
+    if (!schedules || schedules.length === 0) {
+      return []
+    }
+
+    return schedules
+  }
+
+  async getRecentSchedule() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const schedules = await this.Schedule.find({
+      startDate: { $gte: today },
+    })
+      .sort({ date: 1 })
+      .limit(3)
+      .lean()
+
+    if (!schedules) {
+      throw new Error("스케줄을 찾을 수 없습니다.")
+    }
+
+    return schedules.map((schedule) => ({
+      startDate: schedule.startDate,
+      endDate: schedule.endDate,
+      workers: schedule.workers,
+      work: schedule.work,
+      location: schedule.location,
+    }))
+  }
+
+  async createOne({ data, author }) {
+    try {
+      const schedule = new this.Schedule({
+        ...data,
+        author,
+      })
+      const savedSchedule = await schedule.save()
+
+      if (!savedSchedule) {
+        throw new Error("스케줄 생성 실패함")
+      }
+
+      // 스케줄 생성 후 알림 스케줄링
+      await this.scheduleNotificationJob({ id: savedSchedule._id })
+
+      return savedSchedule
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async updateOne({ scheduleId, data, userId }) {
+    try {
+      const schedule = await this.Schedule.findById(scheduleId)
+      if (!schedule) throw { status: 404, message: "일정을 찾을 수 없습니다." }
+
+      if (schedule.author.toString() !== userId)
+        throw { status: 403, message: "권한이 없습니다." }
+
+      // 기존 알림 작업 취소
+      await this.cancelExistingNotificationJobs(scheduleId)
+
+      schedule.set({
+        ...data, // data 객체 전체를 업데이트
+      })
+      const updatedSchedule = await schedule.save()
+
+      // 업데이트된 스케줄로 알림 재스케줄링
+      await this.scheduleNotificationJob({ id: updatedSchedule._id })
+      console.log(
+        `[ScheduleService] 스케줄 ID: ${scheduleId} 업데이트 및 알림 재스케줄링 완료.`
+      )
+      return updatedSchedule
+    } catch (err) {
+      console.error(
+        `[ScheduleService] 스케줄 업데이트 중 오류 발생: ${err.message}`,
+        err
+      )
+      throw err
+    }
+  }
+
+  async deleteOne({ scheduleId, userId }) {
+    try {
+      const schedule = await this.Schedule.findById(scheduleId)
+
+      if (!schedule) throw { status: 404, message: "일정을 찾을 수 없습니다." }
+
+      if (schedule.author.toString() !== userId.toString())
+        throw { status: 403, message: "권한이 없습니다." }
+
+      // 스케줄 삭제 전 관련 알림 작업 취소
+      await this.cancelExistingNotificationJobs({ scheduleId: schedule._id })
+
+      await schedule.deleteOne()
+
+      return true
+    } catch (err) {
+      throw err
+    }
   }
 }
 
