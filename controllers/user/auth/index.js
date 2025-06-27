@@ -145,10 +145,12 @@ export const updateFcmToken = async (req, res) => {
   const { fcmToken } = req.body
   const { userId } = req.user.userId
 
-  if (!userId || !fcmToken) {
-    return res
-      .status(400)
-      .json({ message: "userId 또는 fcmToken이 누락되었습니다." })
+  if (!fcmToken) {
+    return res.status(400).json({ message: "fcmToken이 누락되었습니다." })
+  }
+
+  if (!userId) {
+    return res.status(403).json({ message: "로그인해주세요" })
   }
 
   try {
