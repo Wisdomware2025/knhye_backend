@@ -33,6 +33,11 @@ const ScheduleSchema = new Schema({
     type: String,
     required: true,
   },
+  chargeType: {
+    type: String,
+    required: true,
+    default: "시급",
+  },
   author: {
     type: Schema.Types.ObjectId,
     ref: "User",
