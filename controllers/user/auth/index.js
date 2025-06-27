@@ -142,8 +142,11 @@ export const refreshUserToken = async (req, res) => {
 
 // FCM 토큰 업데이트
 export const updateFcmToken = async (req, res) => {
+  console.log("호출됨")
   const { fcmToken } = req.body
-  const { userId } = req.user.userId
+  const { userId } = req.user
+  console.log(fcmToken)
+  console.log(userId)
 
   if (!fcmToken) {
     return res.status(400).json({ message: "fcmToken이 누락되었습니다." })
