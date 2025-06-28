@@ -96,10 +96,13 @@ export async function updateSchedule(req, res) {
       data,
       userId,
     })
-    res.json(updated)
+
+    return res.json(updated)
   } catch (err) {
     console.log(err)
-    res.status(err.status || 400).json({ message: "스케줄 업데이트 실패" })
+    return res
+      .status(err.status || 400)
+      .json({ message: "스케줄 업데이트 실패" })
   }
 }
 
