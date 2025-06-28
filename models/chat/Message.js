@@ -13,13 +13,26 @@ const MessageSchema = new mongoose.Schema({
   },
   message: {
     type: String,
-    required: true,
+  },
+  img: {
+    type: String,
   },
   timeStamp: { type: Date, default: Date.now },
   isRead: {
     type: Boolean,
     default: false,
   },
+})
+
+MessageSchema.pre("validate", function (next) {
+  if (!this.message && !this.img) {
+    this.invalidate(
+      "message",
+      "message 또는 img 중 하나는 반드시 입력해야 합니다."
+    )
+    this.invalidate("img", "message 또는 img 중 하나는 반드시 입력해야 합니다.")
+  }
+  next()
 })
 
 export default mongoose.model("Message", MessageSchema)

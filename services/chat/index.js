@@ -3,11 +3,12 @@ class ChatService {
     this.Message = Message
   }
 
-  async saveMessage({ senderId, receiverId, message }) {
+  async saveMessage({ senderId, receiverId, message, img }) {
     const newMessage = new this.Message({
       sender_id: senderId,
       receiver_id: receiverId,
       message: message,
+      img: img,
       isRead: false,
     })
 

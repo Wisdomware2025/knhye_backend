@@ -14,12 +14,12 @@ export const sendMessageToOther = async (req, res) => {
   try {
     const senderId = req.user.userId
     const { receiverId } = req.params
-    const { message } = req.body
+    const { message, img } = req.body
 
-    if (!senderId || !receiverId || !message) {
+    if (!senderId || !receiverId) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: senderId, receiverId, or message.",
+        message: "Missing required fields: senderId, receiverId",
       })
     }
 
@@ -27,6 +27,7 @@ export const sendMessageToOther = async (req, res) => {
       senderId,
       receiverId,
       message,
+      img,
     })
 
     if (newMessage.length() === 0) {
