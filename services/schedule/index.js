@@ -139,7 +139,9 @@ class ScheduleService {
   }
 
   async findAllSchedules() {
-    const schedules = await this.Schedule.find().select("work date")
+    const schedules = await this.Schedule.find().select(
+      "work startDate endDate"
+    )
 
     return schedules
   }
