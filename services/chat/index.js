@@ -31,7 +31,7 @@ class ChatService {
       .populate("receiver_id", "username")
   }
 
-  async markMessagesAsRead(currentUserId, otherUserId) {
+  async markMessagesAsRead({ currentUserId, otherUserId }) {
     try {
       const result = await this.Message.updateMany(
         {

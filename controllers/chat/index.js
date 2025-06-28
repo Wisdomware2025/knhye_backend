@@ -78,10 +78,10 @@ export const markMessagesAsRead = async (req, res) => {
       })
     }
 
-    const result = await messageService.markMessagesAsRead(
+    const result = await messageService.markMessagesAsRead({
       currentUserId,
-      otherUserId
-    )
+      otherUserId,
+    })
 
     if (result.modifiedCount > 0) {
       res.status(200).json({

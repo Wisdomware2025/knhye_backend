@@ -17,7 +17,7 @@ export const handleTranslation = async (req, res) => {
   try {
     const translatedText = await translateService.processTranslation({
       originTexts,
-      prompt: `Please translate the following into ${language}.`,
+      prompt: `Translate into ${language}.`,
     })
 
     if (!translatedText) {

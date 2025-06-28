@@ -7,21 +7,32 @@ class TranslateService {
 
   async translateText({ texts, prompt }) {
     try {
-      // if (!Array.isArray(texts) || texts.length === 0) {
-      //   throw new Error("texts가 비었거나 유효하지 않습니다.")
-      // }
+      if (!Array.isArray(texts) || texts.length === 0) {
+        throw new Error("texts가 비었거나 유효하지 않습니다.")
+      }
+
+      const systemContent = `You are a strict translation assistant. Translate every user input according to these rules:
+- If translation is not possible, output the original text.
+- Separate translated texts with '---TRANSLATION_SEPARATOR---'.
+- The output must end with '---TRANSLATION_SEPARATOR---'.
+- The number of output texts must match the number of input texts.`
+
+      // texts 배열을 JSON 문자열로 만들어 한번에 전달
+      const userContent = `${prompt}\nTranslate the following texts:\n${JSON.stringify(
+        texts,
+        null,
+        2
+      )}`
 
       const messages = [
         {
           role: "system",
-          content: `You are a strict translation assistant. Please translate every user input according to the following rules:
-          - If translation is not possible, output the original text.
-          - Separate translated texts with '---TRANSLATION_SEPARATOR---'.
-          - The output must end with '---TRANSLATION_SEPARATOR---'.
-          - The number of output texts must match the number of input texts.
-          `,
+          content: systemContent,
         },
-        ...texts.map((t) => ({ role: "user", content: `${prompt} : ${t}` })),
+        {
+          role: "user",
+          content: userContent,
+        },
       ]
 
       console.log(messages)
@@ -31,15 +42,13 @@ class TranslateService {
         messages: messages,
       })
 
-      //OpenAI API가 반환한 응답에서 번역된 결과 텍스트(content)를 꺼내서 함수의 반환값으로 돌려줌
       const res = completion?.choices?.[0]?.message?.content
 
+      console.log(res)
       if (!res) {
         return texts
       }
 
-      //번역된 텍스트 분리
-      //마지막 빈 문자열 제거를 위해 filter(Boolean)
       const translatedTexts = res
         .split("---TRANSLATION_SEPARATOR---")
         .map((s) => s.trim())
@@ -48,7 +57,9 @@ class TranslateService {
       console.log(translatedTexts)
 
       if (translatedTexts.length !== texts.length) {
-        throw new Error("번역된 텍스트 수가 다름", translatedTexts)
+        throw new Error(
+          `번역된 텍스트 수가 다릅니다. 기대: ${texts.length}, 실제: ${translatedTexts.length}`
+        )
       }
 
       await this.Translation.create({
@@ -58,7 +69,7 @@ class TranslateService {
 
       return translatedTexts
     } catch (err) {
-      throw new Error("번역 실패", err)
+      throw new Error("번역 실패: " + err.message)
     }
   }
 
