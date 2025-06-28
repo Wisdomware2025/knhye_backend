@@ -6,7 +6,6 @@ const translateService = new TranslateService({
 })
 
 export const handleTranslation = async (req, res) => {
-  console.timeLog()
   const { originTexts, language } = req.body
 
   if (!originTexts || !language) {

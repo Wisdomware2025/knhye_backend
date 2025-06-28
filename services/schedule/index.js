@@ -141,11 +141,14 @@ class ScheduleService {
   async findAllSchedules() {
     const schedules = await this.Schedule.find()
 
-    return schedules.map((schedule) => ({
+    const result = schedules.map((schedule) => ({
       startDate: schedule.startDate,
       endDate: schedule.endDate,
       work: schedule.work,
     }))
+
+    console.log(result)
+    return result
   }
 
   async getScheduleByDate({ dateInput }) {
