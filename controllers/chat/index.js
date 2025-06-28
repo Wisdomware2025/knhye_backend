@@ -112,24 +112,12 @@ export const markMessagesAsRead = async (req, res) => {
       })
     }
 
-    const result = await messageService.markMessagesAsRead({
+    await chatService.markMessagesAsRead({
       currentUserId,
       otherUserId,
     })
 
-    if (result.modifiedCount > 0) {
-      res.status(200).json({
-        success: true,
-        message: `${result.modifiedCount}개의 메시지가 읽음으로 표시되었습니다.`,
-        modifiedCount: result.modifiedCount,
-      })
-    } else {
-      res.status(200).json({
-        success: true,
-        message: "새롭게 읽음 처리된 메시지가 없습니다.",
-        modifiedCount: 0,
-      })
-    }
+    return res.status(200).json({ message: "읽음" })
   } catch (err) {
     console.log(err.message)
     return res.status(500).json({ message: "서버 오류" })

@@ -34,7 +34,7 @@ class ChatService {
           username: otherUser.username,
           userId: otherUserId,
           lastMessage: msg.message,
-          img: msg.img,
+          img: "사진을 보냈습니다.",
           timeStamp: msg.timeStamp,
           isRead: msg.isRead,
           // unreadCount,
