@@ -1,7 +1,7 @@
 const MAX_RETRY_ATTEMPTS = 3
 
 class ChatService {
-  constructor({ Message }) {
+  constructor({ Message, User, sendNotification }) {
     this.Message = Message
     this.User = User
     this.sendNotification = sendNotification
