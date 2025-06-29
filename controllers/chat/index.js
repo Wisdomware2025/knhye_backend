@@ -2,8 +2,11 @@ import ChatService from "../../services/chat/index.js"
 import AuthService from "../../services/user/auth/index.js"
 import Message from "../../models/chat/Message.js"
 import User from "../../models/user/User.js"
+import { sendNotification } from "../../firebase/fcm.js"
 const chatService = new ChatService({
   Message,
+  User,
+  sendNotification,
 })
 
 const userService = new AuthService({
