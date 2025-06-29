@@ -15,6 +15,7 @@ const UserSchema = new Schema(
     },
     profileImg: {
       type: String,
+      default: "https://i.imgur.com/z7GReM9.png",
     },
     intro: {
       type: String,
