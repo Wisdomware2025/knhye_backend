@@ -60,9 +60,14 @@ class AuthService {
         phoneNum: newUser.phoneNum,
       }
 
-      const { accessToken, refreshToken, userId } = generateTokens(payload)
+      const { accessToken, refreshToken } = generateTokens(payload)
 
-      return { message: "회원가입 성공", userId, accessToken, refreshToken }
+      return {
+        message: "회원가입 성공",
+        userId: payload.userId,
+        accessToken,
+        refreshToken,
+      }
     } catch (err) {
       throw new Error("회원가입 중 오류 발생")
     }
@@ -82,9 +87,14 @@ class AuthService {
         phoneNum: user.phoneNum,
       }
 
-      const { accessToken, refreshToken, userId } = generateTokens(payload)
+      const { accessToken, refreshToken } = generateTokens(payload)
 
-      return { message: "로그인 성공", userId, accessToken, refreshToken }
+      return {
+        message: "로그인 성공",
+        userId: payload.userId,
+        accessToken,
+        refreshToken,
+      }
     } catch (err) {
       throw new Error(err.message || "로그인 중 오류 발생")
     }
