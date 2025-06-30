@@ -38,7 +38,6 @@ export const getChatList = async (req, res) => {
       chatList,
     })
   } catch (err) {
-    console.error(err.message)
     return res.status(500).json({
       success: false,
       message: "채팅 목록 불러오기 실패",
@@ -72,7 +71,6 @@ export const sendMessageToOther = async (req, res) => {
 
     return res.status(201).json(newMessage)
   } catch (err) {
-    console.log(err.message)
     return res.status(500).json({ message: "서버 오류" })
   }
 }
@@ -99,7 +97,6 @@ export const getMessagesBetweenUsers = async (req, res) => {
     }
     return res.json(messages)
   } catch (err) {
-    console.log(err.message)
     return res.status(500).json({ message: "서버 오류" })
   }
 }
@@ -122,7 +119,6 @@ export const markMessagesAsRead = async (req, res) => {
 
     return res.status(200).json({ message: "읽음" })
   } catch (err) {
-    console.log(err.message)
     return res.status(500).json({ message: "서버 오류" })
   }
 }

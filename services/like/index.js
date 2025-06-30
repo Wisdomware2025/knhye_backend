@@ -113,10 +113,7 @@ class LikeService {
       return this.Board.likesCnt
     } catch (err) {
       if (err.code === 11000) {
-        console.warn(
-          `Duplicate key error (E11000) for userId: ${userId}, boardId: ${boardId}.`,
-          err
-        )
+        console.warn(`Duplicate key error (E11000) for userId.`, err)
       }
       throw err
     } finally {
@@ -164,10 +161,7 @@ class LikeService {
       return this.Review.likesCnt
     } catch (err) {
       if (err.code === 11000) {
-        console.warn(
-          `Duplicate key error (E11000) for userId: ${userId}, reviewId: ${reviewId}.`,
-          err
-        )
+        console.warn(`Duplicate key error (E11000) for userId.`, err)
       }
       throw err
     } finally {
@@ -214,10 +208,7 @@ class LikeService {
       return this.Comment.likesCnt
     } catch (err) {
       if (err.code === 11000) {
-        console.warn(
-          `Duplicate key error (E11000) for userId: ${userId}, commentId: ${commentId}.`,
-          err
-        )
+        console.warn(`Duplicate key error (E11000) for userId.`, err)
       }
       throw err
     } finally {

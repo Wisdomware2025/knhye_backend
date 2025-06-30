@@ -16,7 +16,6 @@ export async function getPopularUsers(req, res) {
 
     return res.status(200).json(popularUsers)
   } catch (err) {
-    console.log(err.message)
     return res.status(500).json({ message: "서버 오류" })
   }
 }
@@ -32,7 +31,6 @@ export async function getProfile(req, res) {
     }
     return res.status(200).json(user)
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ message: "프로필 조회 실패" })
   }
 }
@@ -65,7 +63,6 @@ export async function updateProfileSetting(req, res) {
 
     return res.status(200).json(updatedUser)
   } catch (err) {
-    console.log(err)
     return res.status(400).json({ message: "업데이트 실패: " })
   }
 }

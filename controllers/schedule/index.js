@@ -41,7 +41,6 @@ export async function getScheduleDday(req, res) {
 
     return res.json(schedule)
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ message: "스케줄 불러오기 실패" })
   }
 }
@@ -54,7 +53,6 @@ export async function getRecentSchedule(req, res) {
 
     return res.json(schedule)
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ message: "스케줄 불러오기 실패" })
   }
 }
@@ -79,7 +77,6 @@ export async function createSchedule(req, res) {
     const schedule = await scheduleService.createOne({ data, author })
     return res.status(201).json(schedule)
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ message: "스케줄 생성 실패" })
   }
 }
@@ -99,7 +96,6 @@ export async function updateSchedule(req, res) {
 
     return res.json(updated)
   } catch (err) {
-    console.log(err)
     return res
       .status(err.status || 400)
       .json({ message: "스케줄 업데이트 실패" })
@@ -122,7 +118,6 @@ export async function deleteSchedule(req, res) {
 
     return res.json({ message: "일정이 삭제되었습니다." })
   } catch (err) {
-    console.log(err)
     return res.status(err.status || 400).json({ message: "스케줄 삭제 실패" })
   }
 }

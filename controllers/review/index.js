@@ -20,9 +20,7 @@ export const getReviewsByReceiverId = async (req, res) => {
     const reviews = await reviewService.getReviews(receiverId)
 
     return res.status(200).json(reviews)
-    return
   } catch (err) {
-    console.log(err)
     return res.status(err.status || 500).json({ message: "서버 오류" })
   }
 }
@@ -44,7 +42,6 @@ export const createReview = async (req, res) => {
 
     return res.status(201).json(newReview)
   } catch (err) {
-    console.log(err)
     return res.status(err.status || 500).json({ message: "서버 오류" })
   }
 }
@@ -66,7 +63,6 @@ export const updateReview = async (req, res) => {
 
     return res.status(200).json(updatedReview)
   } catch (err) {
-    console.log(err)
     return res.status(err.status || 500).json({ message: "서버 오류" })
   }
 }
@@ -83,7 +79,6 @@ export const deleteReview = async (req, res) => {
     }
     return res.status(200).json({ message: "삭제 완료" })
   } catch (err) {
-    console.log(err)
     return res.status(err.status || 500).json({ message: "서버 오류" })
   }
 }
@@ -100,7 +95,6 @@ export const likeOneReview = async (req, res) => {
 
     return res.json(review)
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ message: "서버 오류" })
   }
 }

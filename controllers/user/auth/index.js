@@ -31,7 +31,6 @@ export const sendCode = async (req, res) => {
 
     return res.status(201).json({ message: "인증번호 발송 완료" })
   } catch (err) {
-    console.log(err)
     return res.status(500).json({ message: "서버 오류" })
   }
 }
@@ -54,8 +53,6 @@ export const verifyAuthCode = async (req, res) => {
 
     return res.status(200).json({ message: "인증됨" })
   } catch (err) {
-    console.error(err.message)
-
     return res
       .status(500)
       .json({ message: "인증 코드 확인 중 서버 오류가 발생했습니다." })
@@ -107,7 +104,6 @@ export const login = async (req, res) => {
 
     return res.status(200).json({ message, accessToken, refreshToken, userId })
   } catch (err) {
-    console.error(err.message)
     return res.status(401).json({ message: err.message || "로그인 실패" })
   }
 }
@@ -129,7 +125,6 @@ export const refreshUserToken = async (req, res) => {
 
     return res.status(200).json({ accessToken, userId })
   } catch (err) {
-    console.error(err.message)
     return res.status(403).json({
       message: err.message || "토큰 갱신에 실패했습니다. 다시 로그인해주세요.",
     })
@@ -138,11 +133,8 @@ export const refreshUserToken = async (req, res) => {
 
 // FCM 토큰 업데이트
 export const updateFcmToken = async (req, res) => {
-  console.log("호출됨")
   const { fcmToken } = req.body
   const { userId } = req.user
-  console.log(fcmToken)
-  console.log(userId)
 
   if (!fcmToken) {
     return res.status(400).json({ message: "fcmToken이 누락되었습니다." })
@@ -156,7 +148,6 @@ export const updateFcmToken = async (req, res) => {
     const result = await authService.updateFcmToken({ userId, fcmToken })
     return res.status(200).json(result)
   } catch (err) {
-    console.error(err.message)
     return res.status(err.status || 500).json({
       message: err.message || "FCM 토큰 업데이트 중 서버 오류가 발생했습니다.",
     })

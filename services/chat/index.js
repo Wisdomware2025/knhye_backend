@@ -56,7 +56,6 @@ class ChatService {
         }
       }
     } catch (err) {
-      console.error("알림 보내기 실패", err)
       // You might want to throw a more generic error or handle it silently
       throw new Error("메세지 알림 보내기에 실패함")
     }
@@ -126,7 +125,7 @@ class ChatService {
         message: populatedMessage.message,
       })
     } catch (err) {
-      console.error(err)
+      throw new Error("메세지 저장 실패")
     }
 
     // populate로 username도 함께 반환
@@ -175,7 +174,6 @@ class ChatService {
 
       return result
     } catch (error) {
-      console.error("메시지를 읽음으로 표시하는 중 오류 발생:", error)
       throw new Error("메시지 읽음 표시 실패")
     }
   }

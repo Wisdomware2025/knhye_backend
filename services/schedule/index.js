@@ -57,12 +57,6 @@ class ScheduleService {
 
       const userFcmTokens = scheduleEntry.author.fcmTokens
       if (!userFcmTokens || userFcmTokens.length === 0) {
-        // 특정 사용자의 fcmTokens가 없거나 비어있을 경우
-        // 'throw new Error("FCM 토큰이 존재하지 않음")' 대신 경고를 로깅하고 함수를 종료하는 것이 더 적절할 수 있습니다.
-        // 왜냐하면 토큰이 없는 사용자는 알림을 받지 못할 뿐, 시스템에 오류를 발생시키지는 않으니까요.
-        console.warn(
-          `사용자 ${scheduleEntry.author.username}의 FCM 토큰이 존재하지 않습니다.`
-        )
         return // 함수 종료
       }
 
@@ -147,7 +141,6 @@ class ScheduleService {
       work: schedule.work,
     }))
 
-    console.log(result)
     return result
   }
 
@@ -254,15 +247,9 @@ class ScheduleService {
 
       // 업데이트된 스케줄로 알림 재스케줄링
       await this.scheduleNotificationJob({ id: updatedSchedule._id })
-      console.log(
-        `[ScheduleService] 스케줄 ID: ${scheduleId} 업데이트 및 알림 재스케줄링 완료.`
-      )
+
       return updatedSchedule
     } catch (err) {
-      console.error(
-        `[ScheduleService] 스케줄 업데이트 중 오류 발생: ${err.message}`,
-        err
-      )
       throw err
     }
   }

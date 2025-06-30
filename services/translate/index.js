@@ -37,8 +37,6 @@ class TranslateService {
         },
       ]
 
-      console.log(messages)
-
       const completion = await openai.chat.completions.create({
         model: "gpt-4-turbo",
         messages: messages,
@@ -46,7 +44,6 @@ class TranslateService {
 
       const res = completion?.choices?.[0]?.message?.content
 
-      console.log(res)
       if (!res) {
         return texts
       }
@@ -55,8 +52,6 @@ class TranslateService {
         .split("---TRANSLATION_SEPARATOR---")
         .map((s) => s.trim())
         .filter(Boolean)
-
-      console.log(translatedTexts)
 
       if (translatedTexts.length !== texts.length) {
         throw new Error(
@@ -92,15 +87,11 @@ class TranslateService {
           ? translateTexts
           : translateTexts[0]
       } else {
-        console.warn(
-          "번역된 텍스트 수와 원본 텍스트 수가 일치하지 않습니다. 원본 텍스트를 사용합니다."
-        )
         displayTexts = originTexts // 풀백으로 사용
       }
 
       return displayTexts
     } catch (err) {
-      console.log(err)
       // 타입에 따라 다른 에러 메시지
       throw new Error("번역할 수 없음", err)
     }
