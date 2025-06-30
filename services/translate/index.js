@@ -15,7 +15,9 @@ class TranslateService {
 - If translation is not possible, output the original text.
 - Separate translated texts with '---TRANSLATION_SEPARATOR---'.
 - The output must end with '---TRANSLATION_SEPARATOR---'.
-- The number of output texts must match the number of input texts.`
+- The number of output texts must match the number of input texts.
+- If the input sentence is written in the Gyeongsangbuk-do dialect, translate it into natural and clear **Standard Korean**.
+- Preserve the tone, nuance, and emotional expression of the original sentence as much as possible.`
 
       // texts 배열을 JSON 문자열로 만들어 한번에 전달
       const userContent = `${prompt}\nTranslate the following texts:\n${JSON.stringify(
