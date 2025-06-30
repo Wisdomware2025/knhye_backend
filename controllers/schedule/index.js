@@ -23,6 +23,7 @@ export const getAllSchedules = async (req, res) => {
 export async function getScheduleDday(req, res) {
   try {
     let dateToSearch = req.params.date
+    const userId = req.user.userId
     const parsedMomentDate = moment.tz(dateToSearch, "YYYY-MM-DD", "Asia/Seoul")
 
     if (!parsedMomentDate.isValid()) {
@@ -36,6 +37,7 @@ export async function getScheduleDday(req, res) {
 
     const schedule = await scheduleService.getScheduleByDate({
       dateInput: validDateForService,
+      userId,
     })
 
     if (!schedule) return res.status(404).json({ message: "일정이 없습니다." })

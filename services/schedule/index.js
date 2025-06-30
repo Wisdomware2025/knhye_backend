@@ -175,6 +175,7 @@ class ScheduleService {
         { startDate: { $lte: queryDateEnd } }, // 스케줄의 시작 날짜가 쿼리 날짜의 끝보다 작거나 같고
         { endDate: { $gte: queryDateStart } }, // 스케줄의 종료 날짜가 쿼리 날짜의 시작보다 크거나 같은 경우
       ],
+      author: userId,
     })
 
     if (!schedules || schedules.length === 0) {
