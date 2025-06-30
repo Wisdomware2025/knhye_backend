@@ -37,6 +37,8 @@ export const generateTokens = (payload) => {
 }
 
 export const refreshAccessToken = (refreshToken) => {
+  if (!refreshToken) throw new Error("리프레시 토큰이 제공되지 않았습니다.")
+
   try {
     // 리프레시 토큰 검증
     const decoded = verify(refreshToken, REFRESH_TOKEN_SECRET)
@@ -52,6 +54,9 @@ export const refreshAccessToken = (refreshToken) => {
     const newAccessToken = sign(newAccessTokenPayload, ACCESS_TOKEN_SECRET, {
       expiresIn: "1h",
     })
+
+    console.log(newAccessToken)
+    console.log(newAccessTokenPayload.userId)
 
     return { newAccessToken, userId: newAccessTokenPayload.userId }
   } catch (error) {
