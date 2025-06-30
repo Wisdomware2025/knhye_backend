@@ -1,8 +1,8 @@
 import pkg from "jsonwebtoken"
 import dotenv from "dotenv"
 const { TokenExpiredError, JsonWebTokenError } = pkg
-import RefreshToken from "../models/user/RefreshToken"
-import User from "../models/user/User"
+import RefreshToken from "../models/user/RefreshToken.js"
+import User from "../models/user/User.js"
 
 dotenv.config()
 
