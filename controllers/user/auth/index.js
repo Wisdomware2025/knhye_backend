@@ -46,7 +46,11 @@ export const verifyAuthCode = async (req, res) => {
         .json({ message: "전화번호 또는 인증번호가 누락되었습니다." })
     }
 
-    await authService.verifyAuthCode({ phoneNum, inputCode })
+    const verified = await authService.verifyAuthCode({ phoneNum, inputCode })
+
+    if (!verified) {
+      return res.status(err.status || 403).json({ message: "인증 실패" })
+    }
 
     return res.status(200).json({ message: "인증됨" })
   } catch (err) {
@@ -79,7 +83,7 @@ export const signup = async (req, res) => {
 
     return res.status(201).json({ message: "회원가입 완료", user: newUser })
   } catch (err) {
-    return res.status(409).json({ message: err.message })
+    return res.status(500).json({ message: err.message })
   }
 }
 
@@ -96,6 +100,10 @@ export const login = async (req, res) => {
       phoneNum,
     })
 
+    if (!message || !accessToken || !refreshToken) {
+      return res.status(500).json({ message: "토큰 발급 실패" })
+    }
+
     // 리프레시 토큰을 HttpOnly 쿠키에 저장 => 클라이언트 JavaScript에서 접근 불가, 보안 강화
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -104,7 +112,7 @@ export const login = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30일
     })
 
-    res.status(200).json({ message, accessToken })
+    return res.status(200).json({ message, accessToken })
   } catch (err) {
     console.error(err.message)
     return res.status(401).json({ message: err.message || "로그인 실패" })
@@ -113,8 +121,7 @@ export const login = async (req, res) => {
 
 // 자동 로그인, 액세스 토큰 갱신
 export const refreshUserToken = async (req, res) => {
-  // HttpOnly 쿠키에서 리프레시 토큰을 가져옴
-  const refreshToken = req.cookies.refreshToken
+  const refreshToken = req.body.refreshToken
 
   if (!refreshToken) {
     return res
@@ -128,12 +135,6 @@ export const refreshUserToken = async (req, res) => {
     return res.status(200).json({ accessToken })
   } catch (err) {
     console.error(err.message)
-    // 리프레시 토큰이 만료되었거나 유효하지 않은 경우, 쿠키를 지우고 재로그인 요청
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    })
     return res.status(403).json({
       message: err.message || "토큰 갱신에 실패했습니다. 다시 로그인해주세요.",
     })
