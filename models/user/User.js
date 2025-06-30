@@ -26,6 +26,18 @@ const UserSchema = new Schema(
         ref: "User",
       },
     ],
+    friendRequests: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    sentRequests: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     fcmTokens: [
       {
         token: {
