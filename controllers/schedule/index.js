@@ -11,7 +11,8 @@ const scheduleService = new ScheduleService({
 
 export const getAllSchedules = async (req, res) => {
   try {
-    const schedules = await scheduleService.findAllSchedules()
+    const userId = req.user.userId
+    const schedules = await scheduleService.findAllSchedules(userId)
 
     return res.json(schedules)
   } catch (err) {

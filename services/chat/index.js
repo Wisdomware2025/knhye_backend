@@ -92,7 +92,7 @@ class ChatService {
           username: otherUser.username,
           userId: otherUserId,
           lastMessage: msg.message,
-          img: "사진을 보냈습니다.",
+          img: msg.img,
           timeStamp: msg.timeStamp,
           isRead: msg.isRead,
           // unreadCount,
@@ -104,7 +104,7 @@ class ChatService {
   }
 
   async saveMessage({ senderId, receiverId, message, img }) {
-    const newMessage = new this.Message({
+    const newMessage = await this.Message.create({
       sender_id: senderId,
       receiver_id: receiverId,
       message: message,
@@ -112,11 +112,10 @@ class ChatService {
       isRead: false,
     })
 
-    await newMessage.save()
-
-    const populatedMessage = await newMessage
-      .populate("sender_id", "username")
-      .populate("receiver_id", "username")
+    const populatedMessage = await this.Message.populate(newMessage, [
+      { path: "sender_id", select: "username" },
+      { path: "receiver_id", select: "username" },
+    ])
 
     try {
       await this.messageNotification({

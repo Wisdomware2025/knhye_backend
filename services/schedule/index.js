@@ -132,8 +132,8 @@ class ScheduleService {
     })
   }
 
-  async findAllSchedules() {
-    const schedules = await this.Schedule.find()
+  async findAllSchedules(userId) {
+    const schedules = await this.Schedule.find({ author: userId })
 
     const result = schedules.map((schedule) => ({
       startDate: schedule.startDate,

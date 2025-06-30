@@ -65,12 +65,13 @@ export const sendMessageToOther = async (req, res) => {
       img,
     })
 
-    if (newMessage.length() === 0) {
+    if (newMessage.length === 0) {
       return res.status(500).json({ message: "메세지 전송 실패" })
     }
 
     return res.status(201).json(newMessage)
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ message: "서버 오류" })
   }
 }
