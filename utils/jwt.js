@@ -33,7 +33,7 @@ export const generateTokens = (payload) => {
     expiresIn: "30d",
   })
 
-  return { accessToken, refreshToken }
+  return { accessToken, refreshToken, userId: payload.userId }
 }
 
 export const refreshAccessToken = (refreshToken) => {
@@ -53,7 +53,7 @@ export const refreshAccessToken = (refreshToken) => {
       expiresIn: "1h",
     })
 
-    return newAccessToken
+    return { newAccessToken, userId }
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       console.error("리프레시 토큰이 만료되었습니다:", error.message)

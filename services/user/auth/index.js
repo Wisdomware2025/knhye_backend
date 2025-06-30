@@ -60,9 +60,9 @@ class AuthService {
         phoneNum: newUser.phoneNum,
       }
 
-      const { accessToken, refreshToken } = generateTokens(payload)
+      const { accessToken, refreshToken, userId } = generateTokens(payload)
 
-      return { message: "회원가입 성공", accessToken, refreshToken }
+      return { message: "회원가입 성공", userId, accessToken, refreshToken }
     } catch (err) {
       throw new Error("회원가입 중 오류 발생")
     }
@@ -82,9 +82,9 @@ class AuthService {
         phoneNum: user.phoneNum,
       }
 
-      const { accessToken, refreshToken } = generateTokens(payload)
+      const { accessToken, refreshToken, userId } = generateTokens(payload)
 
-      return { message: "로그인 성공", accessToken, refreshToken }
+      return { message: "로그인 성공", userId, accessToken, refreshToken }
     } catch (err) {
       throw new Error(err.message || "로그인 중 오류 발생")
     }
@@ -92,8 +92,8 @@ class AuthService {
 
   async refreshUserToken(refreshToken) {
     try {
-      const newAccessToken = refreshAccessToken(refreshToken) // utils/jwt.js의 함수 호출
-      return { accessToken: newAccessToken }
+      const { newAccessToken, userId } = refreshAccessToken(refreshToken) // utils/jwt.js의 함수 호출
+      return { accessToken: newAccessToken, userId: userId }
     } catch (err) {
       // jwt.js에서 던진 에러를 다시 던져서 상위 로직에서 처리
       throw new Error(err.message || "토큰 갱신 중 오류 발생")
