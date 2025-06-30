@@ -104,15 +104,7 @@ export const login = async (req, res) => {
       return res.status(500).json({ message: "토큰 발급 실패" })
     }
 
-    // 리프레시 토큰을 HttpOnly 쿠키에 저장 => 클라이언트 JavaScript에서 접근 불가, 보안 강화
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30일
-    })
-
-    return res.status(200).json({ message, accessToken })
+    return res.status(200).json({ message, accessToken, refreshToken })
   } catch (err) {
     console.error(err.message)
     return res.status(401).json({ message: err.message || "로그인 실패" })
