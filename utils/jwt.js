@@ -1,6 +1,8 @@
 import pkg from "jsonwebtoken"
 import dotenv from "dotenv"
 const { TokenExpiredError, JsonWebTokenError } = pkg
+import RefreshToken from "../models/user/RefreshToken"
+import User from "../models/user/User"
 
 dotenv.config()
 
@@ -30,26 +32,60 @@ export const generateTokens = (payload) => {
   return { accessToken, refreshToken }
 }
 
-export const refreshAccessToken = (refreshToken) => {
+export const refreshAccessToken = async (refreshToken) => {
   if (!refreshToken) throw new Error("리프레시 토큰이 제공되지 않았습니다.")
 
   try {
     // 리프레시 토큰 검증
-    const decoded = verify(refreshToken, REFRESH_TOKEN_SECRET)
+    const decoded = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
 
-    // 새로운 액세스 토큰을 위한 페이로드 생성 (리프레시 토큰의 페이로드 활용)
+    // DB에 저장된 토큰인지 확인 (블랙리스트 확인 효과)
+    const savedToken = await RefreshToken.findOne({ token: refreshToken })
+    if (!savedToken) {
+      throw new Error("유효하지 않거나 만료된 리프레시 토큰입니다.")
+    }
+
+    const user = await User.findById(decoded.userId)
+    if (!user) {
+      throw new Error("존재하지 않는 사용자입니다. 다시 로그인해주세요.")
+    }
+
+    // 새로운 액세스 토큰 생성
     const newAccessTokenPayload = {
       userId: decoded.userId,
       username: decoded.username,
       phoneNum: decoded.phoneNum,
     }
 
-    // 새로운 액세스 토큰 발행
-    const newAccessToken = sign(newAccessTokenPayload, ACCESS_TOKEN_SECRET, {
-      expiresIn: "1h",
+    const newAccessToken = sign(
+      newAccessTokenPayload,
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    )
+
+    // 새로운 리프레시 토큰 발행
+    const newRefreshToken = sign(
+      newAccessTokenPayload,
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: "30d",
+      }
+    )
+
+    // 기존 리프레시 토큰 삭제 후 새로 저장
+    await RefreshToken.deleteMany({ userId: decoded.userId })
+    await RefreshToken.create({
+      userId: decoded.userId,
+      token: newRefreshToken,
     })
 
-    return { newAccessToken, userId: newAccessTokenPayload.userId }
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      userId: decoded.userId,
+    }
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       throw new Error("리프레시 토큰이 만료되었습니다. 다시 로그인해주세요.")

@@ -111,6 +111,10 @@ export const login = async (req, res) => {
 // 자동 로그인, 액세스 토큰 갱신
 export const refreshUserToken = async (req, res) => {
   const refreshToken = req.body.refreshToken
+  const user = await User.findById(decoded.userId)
+  if (!user) {
+    throw new Error("존재하지 않는 사용자입니다. 다시 로그인해주세요.")
+  }
 
   if (!refreshToken) {
     return res
