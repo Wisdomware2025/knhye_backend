@@ -173,11 +173,15 @@ class ScheduleService {
       )
     }
 
-    const start = moment.tz(dateInput, "Asia/Seoul").startOf("day").toDate()
-    const end = moment.tz(dateInput, "Asia/Seoul").endOf("day").toDate()
+    // dateInput의 시작과 끝 (해당 날짜 전체)
+    const queryDateStart = momentDate.startOf("day").toDate()
+    const queryDateEnd = momentDate.endOf("day").toDate()
 
     const schedules = await this.Schedule.find({
-      startDate: { $gte: start, $lt: end },
+      $and: [
+        { startDate: { $lte: queryDateEnd } }, // 스케줄의 시작 날짜가 쿼리 날짜의 끝보다 작거나 같고
+        { endDate: { $gte: queryDateStart } }, // 스케줄의 종료 날짜가 쿼리 날짜의 시작보다 크거나 같은 경우
+      ],
     })
 
     if (!schedules || schedules.length === 0) {
