@@ -56,7 +56,7 @@ export const refreshAccessToken = (refreshToken) => {
     })
 
     console.log(newAccessToken)
-    console.log(newAccessTokenPayload.userId)
+    console.log("userId : ", newAccessTokenPayload.userId)
 
     return { newAccessToken, userId: newAccessTokenPayload.userId }
   } catch (error) {

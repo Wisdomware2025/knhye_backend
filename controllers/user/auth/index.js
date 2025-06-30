@@ -96,15 +96,16 @@ export const login = async (req, res) => {
   }
 
   try {
-    const { message, accessToken, refreshToken } = await authService.login({
-      phoneNum,
-    })
+    const { message, accessToken, refreshToken, userId } =
+      await authService.login({
+        phoneNum,
+      })
 
     if (!message || !accessToken || !refreshToken) {
       return res.status(500).json({ message: "토큰 발급 실패" })
     }
 
-    return res.status(200).json({ message, accessToken, refreshToken })
+    return res.status(200).json({ message, accessToken, refreshToken, userId })
   } catch (err) {
     console.error(err.message)
     return res.status(401).json({ message: err.message || "로그인 실패" })
@@ -122,9 +123,11 @@ export const refreshUserToken = async (req, res) => {
   }
 
   try {
-    const { accessToken } = await authService.refreshUserToken(refreshToken)
+    const { accessToken, userId } = await authService.refreshUserToken(
+      refreshToken
+    )
 
-    return res.status(200).json({ accessToken })
+    return res.status(200).json({ accessToken, userId })
   } catch (err) {
     console.error(err.message)
     return res.status(403).json({
