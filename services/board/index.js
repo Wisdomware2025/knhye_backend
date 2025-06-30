@@ -60,24 +60,19 @@ class BoardService {
     return formatBoards
   }
 
-  async findOneBoard(boardId) {
-    if (req.cookies[boardId] == undefined) {
-      // key, value, 옵션을 설정해준다.
-      res.cookie(boardId, getUserIP(req), {
-        // 유효시간 : 12분
-        maxAge: 720000,
-      })
-      // 조회수 증가 쿼리
-      await this.Board.updateOne({ boardId }, { $inc: { viewCnt: 1 } })
-    }
-
+  async findOneBoard({ boardId }) {
+    // if (req.cookies[boardId] == undefined) {
+    //   // key, value, 옵션을 설정해준다.
+    //   res.cookie(boardId, getUserIP(req), {
+    //     // 유효시간 : 12분
+    //     maxAge: 720000,
+    //   })
+    //   // 조회수 증가 쿼리
+    //   await this.Board.updateOne({ boardId }, { $inc: { viewCnt: 1 } })
+    // }
     const board = await this.Board.findById(boardId)
-    const formatBoard = board.map((boards) => ({
-      ...board.toObject(),
-      _id: boards._id.toString(),
-    }))
 
-    return formatBoard
+    return board
   }
 
   async createBoard(data) {

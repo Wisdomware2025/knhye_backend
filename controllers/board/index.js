@@ -57,11 +57,12 @@ export const getBoardsByUserId = async (req, res) => {
 // 특정 게시글 조회
 export const getBoardById = async (req, res) => {
   try {
-    const boardId = req.params
-    const board = await boardService.findOneBoard(boardId)
+    const boardId = req.params.boardId
+
+    const board = await boardService.findOneBoard({ boardId })
 
     if (!board) {
-      res
+      return res
         .status(404)
         .json({ message: "해당 게시글이 없거나 유저가 일치하지 않습니다." })
     }
