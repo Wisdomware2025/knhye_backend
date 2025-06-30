@@ -49,8 +49,9 @@ export async function getScheduleDday(req, res) {
 }
 
 export async function getRecentSchedule(req, res) {
+  const userId = req.user.userId
   try {
-    const schedule = await scheduleService.getRecentSchedule()
+    const schedule = await scheduleService.getRecentSchedule(userId)
 
     if (!schedule) return res.status(404).json({ message: "일정이 없습니다." })
 

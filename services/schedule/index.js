@@ -144,7 +144,7 @@ class ScheduleService {
     return result
   }
 
-  async getScheduleByDate({ dateInput }) {
+  async getScheduleByDate({ dateInput, userId }) {
     let momentDate
 
     if (dateInput instanceof Date) {
@@ -185,12 +185,13 @@ class ScheduleService {
     return schedules
   }
 
-  async getRecentSchedule() {
+  async getRecentSchedule(userId) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
     const schedules = await this.Schedule.find({
       startDate: { $gte: today },
+      author: userId,
     })
       .sort({ date: 1 })
       .limit(3)
