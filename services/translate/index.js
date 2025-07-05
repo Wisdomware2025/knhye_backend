@@ -1,4 +1,5 @@
 import openai from "../../config/openai.js"
+import fs from "fs/promises"
 
 class TranslateService {
   constructor({ Translation }) {
@@ -6,17 +7,20 @@ class TranslateService {
   }
 
   async translateText({ texts, prompt }) {
+    const dialectList = await fs.readFile("data/dialect_dict.txt", "utf-8")
+
     try {
       if (!Array.isArray(texts) || texts.length === 0) {
         throw new Error("texts가 비었거나 유효하지 않습니다.")
       }
 
       const systemContent = `You are a strict translation assistant. Translate every user input according to these rules:
-- If translation is not possible, output the original text.
+- If translation is not possible, you must output the original text.
 - Separate translated texts with '---TRANSLATION_SEPARATOR---'.
 - The output must end with '---TRANSLATION_SEPARATOR---'.
 - The number of output texts must match the number of input texts.
-- If the input sentence is written in the Gyeongsangbuk-do dialect, translate it into natural and clear **Standard Korean**.
+- If the text is in a Korean dialect, please refer to the following list and translate it into standard Korean: ${dialectList}
+.
 - Preserve the tone, nuance, and emotional expression of the original sentence as much as possible.`
 
       // texts 배열을 JSON 문자열로 만들어 한번에 전달
