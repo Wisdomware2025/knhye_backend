@@ -150,14 +150,14 @@ class ChatService {
       .populate("receiver_id", "username")
 
     // populate로 username도 함께 반환
-    return {
-      message: result.message,
-      img: result.img,
-      timeStamp: result.timeStamp,
-      isRead: result.isRead,
-      sender: result.sender_id.username,
-      receiver: result.receiver_id.username,
-    }
+    return result.map((msg) => ({
+      message: msg.message,
+      img: msg.img,
+      timeStamp: msg.timeStamp,
+      isRead: msg.isRead,
+      sender: msg.sender_id?.username,
+      receiver: msg.receiver_id?.username,
+    }))
   }
 
   async markMessagesAsRead({ currentUserId, otherUserId }) {

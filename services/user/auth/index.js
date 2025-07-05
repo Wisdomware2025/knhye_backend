@@ -6,6 +6,16 @@ class AuthService {
     this.AuthCode = AuthCode
   }
 
+  async findUserById({ userId }) {
+    const user = await this.User.findOne({ _id: userId })
+
+    if (!user) {
+      throw new Error("유저를 찾을 수 없습니다.")
+    }
+
+    return user
+  }
+
   // 인증코드 검증하는 로직
   async verifyAuthCode({ phoneNum, inputCode }) {
     try {

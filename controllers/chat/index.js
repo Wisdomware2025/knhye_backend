@@ -81,8 +81,9 @@ export const getMessagesBetweenUsers = async (req, res) => {
     const me = req.user.userId
     const { user } = req.params
 
-    const user1 = await userService.findUserById(me)
-    const user2 = await userService.findUserById(user)
+    const user1 = await userService.findUserById({ userId: me })
+
+    const user2 = await userService.findUserById({ userId: user })
 
     if (!user1 || !user2) {
       return res.status(404).json({ message: "유저를 찾을 수 없음" })
@@ -93,11 +94,9 @@ export const getMessagesBetweenUsers = async (req, res) => {
       userId2: user2._id,
     })
 
-    if (messages.length === 0) {
-      return res.status(404).json({ message: "메세지가 없습니다." })
-    }
     return res.json(messages)
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ message: "서버 오류" })
   }
 }

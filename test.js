@@ -3,11 +3,11 @@ import dotenv from "dotenv"
 import mongoose from "mongoose"
 dotenv.config()
 
-const id = new mongoose.Types.ObjectId("684b5e9db24c0d3071704a2e")
+const id = new mongoose.Types.ObjectId("686292d54c9f85e33e1505f7")
 
 const payload = {
   userId: id,
-  username: "이현석",
+  username: "ㅇ",
   phoneNum: "01096673894",
 }
 
