@@ -160,12 +160,12 @@ class ChatService {
     }))
   }
 
-  async markMessagesAsRead({ currentUserId, otherUserId }) {
+  async markMessagesAsRead({ me, user }) {
     try {
       const result = await this.Message.updateMany(
         {
-          receiver_id: currentUserId,
-          sender_id: otherUserId,
+          receiver_id: me,
+          sender_id: user,
           isRead: false,
         },
         { $set: { isRead: true } }

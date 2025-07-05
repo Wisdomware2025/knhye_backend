@@ -103,18 +103,19 @@ export const getMessagesBetweenUsers = async (req, res) => {
 
 export const markMessagesAsRead = async (req, res) => {
   try {
-    const { currentUserId, otherUserId } = req.body
+    const me = req.user.userId
+    const { user } = req.params
 
-    if (!currentUserId || !otherUserId) {
+    if (!me || !user) {
       return res.status(400).json({
         success: false,
-        message: "currentUserId와 otherUserId는 필수입니다.",
+        message: "사용자 아이디들이 비어있습니다.",
       })
     }
 
     await chatService.markMessagesAsRead({
-      currentUserId,
-      otherUserId,
+      me,
+      user,
     })
 
     return res.status(200).json({ message: "읽음" })
