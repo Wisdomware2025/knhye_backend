@@ -62,46 +62,43 @@ class ChatService {
   }
 
   async getChatList(userId) {
-    // 1. 해당 유저가 보낸/받은 모든 메시지를 가져옴
     const messages = await this.Message.find({
       $or: [{ sender_id: userId }, { receiver_id: userId }],
     })
-      .sort({ timeStamp: -1 }) // 최근 메시지 기준 정렬
+      .sort({ timeStamp: -1 })
       .populate("sender_id", "username")
       .populate("receiver_id", "username")
 
-    console.log(messages)
-
-    if (!messages) {
-      return null
+    if (!messages || messages.length === 0) {
+      return []
     }
 
     const chatMap = new Map()
 
     for (const msg of messages) {
-      const otherUser =
-        String(msg.sender_id._id) === String(userId)
-          ? String(msg.receiver_id)
-          : String(msg.sender_id)
+      let otherUser
+      // 현재 메시지의 발신자가 userId와 같다면, 수신자가 상대방
+      if (String(msg.sender_id._id) === String(userId)) {
+        otherUser = msg.receiver_id
+      } else {
+        // 현재 메시지의 수신자가 userId와 같다면, 발신자가 상대방
+        otherUser = msg.sender_id
+      }
 
-      // const otherUserId = String(otherUser._id)
+      if (!otherUser || !otherUser._id) {
+        continue // 다음 메시지로 넘어감
+      }
 
-      if (!chatMap.has(otherUser)) {
-        // // 안 읽은 메시지 수 계산
-        // const unreadCount = await this.Message.countDocuments({
-        //   sender_id: otherUserId,
-        //   receiver_id: userId,
-        //   isRead: false,
-        // })
+      const otherUserId = String(otherUser._id)
 
-        chatMap.set(otherUser, {
+      if (!chatMap.has(otherUserId)) {
+        chatMap.set(otherUserId, {
           username: otherUser.username,
-          userId: otherUser,
+          userId: otherUser._id,
           lastMessage: msg.message,
           img: msg.img,
           timeStamp: msg.timeStamp,
           isRead: msg.isRead,
-          // unreadCount,
         })
       }
     }
