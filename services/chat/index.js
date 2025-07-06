@@ -70,17 +70,23 @@ class ChatService {
       .populate("sender_id", "username")
       .populate("receiver_id", "username")
 
+    console.log(messages)
+
+    if (!messages) {
+      return null
+    }
+
     const chatMap = new Map()
 
     for (const msg of messages) {
       const otherUser =
         String(msg.sender_id._id) === String(userId)
-          ? msg.receiver_id
-          : msg.sender_id
+          ? String(msg.receiver_id)
+          : String(msg.sender_id)
 
-      const otherUserId = String(otherUser._id)
+      // const otherUserId = String(otherUser._id)
 
-      if (!chatMap.has(otherUserId)) {
+      if (!chatMap.has(otherUser)) {
         // // 안 읽은 메시지 수 계산
         // const unreadCount = await this.Message.countDocuments({
         //   sender_id: otherUserId,
@@ -88,9 +94,9 @@ class ChatService {
         //   isRead: false,
         // })
 
-        chatMap.set(otherUserId, {
+        chatMap.set(otherUser, {
           username: otherUser.username,
-          userId: otherUserId,
+          userId: otherUser,
           lastMessage: msg.message,
           img: msg.img,
           timeStamp: msg.timeStamp,

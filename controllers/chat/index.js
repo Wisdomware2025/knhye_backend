@@ -38,6 +38,7 @@ export const getChatList = async (req, res) => {
       chatList,
     })
   } catch (err) {
+    console.log(err)
     return res.status(500).json({
       success: false,
       message: "채팅 목록 불러오기 실패",
