@@ -1,5 +1,6 @@
 import ChatService from "../services/chat/index.js"
 import Message from "../models/chat/Message.js"
+import Translation from "../models/translate/Translation.js"
 
 import TranslateService from "../services/translate/index.js"
 const chatService = new ChatService({

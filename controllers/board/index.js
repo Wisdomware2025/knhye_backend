@@ -143,11 +143,11 @@ export const selectOneBoard = async (req, res) => {
     const boardId = req.params
     const board = await boardService.selectBoard(boardId)
 
-    if (!board.success) {
+    if (!board) {
       return res.status(404).json({ message: "게시글 없음" })
     }
 
-    return res.status(200).json({ message: board.message })
+    return res.status(200).json(board)
   } catch (err) {
     return res.status(500).json({ message: "서버 오류" })
   }

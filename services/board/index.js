@@ -130,7 +130,7 @@ class BoardService {
 
     await board.save()
 
-    return { success: true, message: message }
+    return board.isSelected
   }
 }
 
