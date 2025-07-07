@@ -27,7 +27,7 @@ router.post("/worker", authMiddleware, validateWorkerBoard, createBoard)
 router.put("/farmer/:boardId", authMiddleware, validateFarmerBoard, updateBoard)
 router.put("/worker/:boardId", authMiddleware, validateWorkerBoard, updateBoard)
 router.delete("/:boardId", authMiddleware, deleteBoard)
-router.post("/:boardId", authMiddleware, likeOneBoard)
-router.post("/:boardId", authMiddleware, selectOneBoard)
+router.post("/like/:boardId", authMiddleware, likeOneBoard)
+router.post("/selected/:boardId", authMiddleware, selectOneBoard)
 
 export default router
