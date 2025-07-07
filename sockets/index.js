@@ -1,7 +1,13 @@
 import ChatService from "../services/chat/index.js"
 import Message from "../models/chat/Message.js"
+
+import TranslateService from "../services/translate/index.js"
 const chatService = new ChatService({
   Message,
+})
+
+const translateService = new TranslateService({
+  Translation,
 })
 
 export const initChatSocket = (io) => {
@@ -22,21 +28,33 @@ export const initChatSocket = (io) => {
       }
     })
 
-    socket.on("sendMessage", async ({ senderId, receiverId, message }) => {
-      try {
-        const savedMessage = await chatService.saveMessage({
-          senderId,
-          receiverId,
-          message,
-        })
+    socket.on(
+      "sendMessage",
+      async ({ senderId, receiverId, message, isTranslate, targetLang }) => {
+        try {
+          let finalMessage = message
 
-        const room = [senderId, receiverId].sort().join("-")
+          if (isTranslate && targetLang) {
+            finalMessage = await translateService.processTranslation({
+              originTexts: message,
+              prompt: `Translate into ${targetLang}.`,
+            })
+          }
 
-        io.to(room).emit("receiveMessage", savedMessage)
-      } catch (err) {
-        socket.emit("error", "cannot send message")
+          const savedMessage = await chatService.saveMessage({
+            senderId,
+            receiverId,
+            message,
+          })
+
+          const room = [senderId, receiverId].sort().join("-")
+
+          io.to(room).emit("receiveMessage", savedMessage)
+        } catch (err) {
+          socket.emit("error", "cannot send message")
+        }
       }
-    })
+    )
 
     socket.on("disconnect", () => {
       socketConnected.delete(socket.id)
