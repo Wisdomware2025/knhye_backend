@@ -74,7 +74,7 @@ class AuthService {
 
       return {
         message: "회원가입 성공",
-        userId: newUser.userId,
+        userId: payload.userId,
         accessToken,
         refreshToken,
       }
