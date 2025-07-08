@@ -63,7 +63,10 @@ class ChatService {
 
   async getChatList(userId) {
     const messages = await this.Message.find({
-      $or: [{ sender_id: userId }, { receiver_id: userId }],
+      $or: [
+        { sender_id: new mongoose.Types.ObjectId(userId) },
+        { receiver_id: new mongoose.Types.ObjectId(userId) },
+      ],
     })
       .sort({ timeStamp: -1 })
       .populate("sender_id", "username")
