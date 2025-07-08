@@ -1,3 +1,5 @@
+import mongoose from "mongoose"
+
 const MAX_RETRY_ATTEMPTS = 3
 
 class ChatService {

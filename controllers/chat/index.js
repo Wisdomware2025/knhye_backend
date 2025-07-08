@@ -16,7 +16,6 @@ const userService = new AuthService({
 export const getChatList = async (req, res) => {
   try {
     const userId = req.user.userId
-    console.log(userId)
 
     if (!userId) {
       return res.status(400).json({
