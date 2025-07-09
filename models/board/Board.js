@@ -12,7 +12,7 @@ const BoardSchema = new Schema({
   date: { type: Date }, // 날짜, 시간
   charge: { type: String }, // 급여
 
-  isSelected: { type: Boolean }, // 완료 됐는지
+  isSelected: { type: Boolean, default: false }, // 완료 됐는지
   likesCnt: { type: Number, default: 0 },
   viewCnt: { type: Number, default: 0 },
   comments: [{ type: Schema.Types.ObjectId, ref: "Comments" }],
