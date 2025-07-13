@@ -84,6 +84,7 @@ export const createBoard = async (req, res) => {
     const newBoard = await boardService.createBoard(data)
     return res.status(201).json({ message: "게시글 등록 완료", newBoard })
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ message: "게시글 등록 실패" })
   }
 }
