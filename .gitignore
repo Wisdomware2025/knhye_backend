@@ -145,3 +145,5 @@ dist
 
 #firebase
 firebase/firebase-adminsdk.json
+
+key.pem

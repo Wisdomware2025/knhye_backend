@@ -22,7 +22,7 @@ import connectDB from "./config/db.js"
 connectDB() // MongoDB 연결
 
 const app = express()
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 5000
 
 // 미들웨어
 app.set("port", port)
